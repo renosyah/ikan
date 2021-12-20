@@ -46,6 +46,10 @@ def index():
 def training():
     return send_from_directory(os.path.join('templates','menu'), 'training.html')
 
+@menu.route('/training/<path:target_param>', methods=['GET','POST'])
+def training_model(target_param):
+    return jsonify({'is_exist': os.path.exists(os.path.join('app','training',target_param,'Theta1.csv')),'target_param' : target_param}) 
+
 @menu.route('/training/perform/<path:target_param>', methods=['GET','POST'])
 def training_perform(target_param):
     training_data = create_training_data(CLASSES, DATADIR, IMG_SIZE, target_param)

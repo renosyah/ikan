@@ -34,7 +34,7 @@
                <div class="col s12">
                   <div class="card-panel">
                      <div class="row">
-                        <div class = "col s4">
+                        <div class = "col s12 m12 l4">
                           <h5>Deteksi : Mata Ikan</h5>
                           <div class="center">
                               <img v-show="images['eye']" v-bind:src="images['eye']" width="200" height="200" />
@@ -47,10 +47,11 @@
                                 <input class = "file-path validate" type = "text" placeholder = "Upload gambar mata ikan" />
                               </div>
                           </div>
-                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('eye')" :disabled="is_loading || !images['eye']"> <b><span>Proses</span></b></button>
+                          <p><span v-if="!training_result.eye.training_model_exist">Model Belum Dilatih!</span><br /></p>
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('eye')" :disabled="is_loading || !images['eye'] || !training_result.eye.training_model_exist"> <b><span>Proses</span></b></button>
                           <br /><br /><br />
                         </div>
-                        <div class = "col s4">
+                        <div class = "col s12 m12 l4">
                           <h5>Deteksi : Insang Ikan</h5>
                           <div class="center">
                               <img v-show="images['gill']" v-bind:src="images['gill']" width="200" height="200" />
@@ -63,10 +64,11 @@
                                 <input class = "file-path validate" type = "text" placeholder = "Upload gambar insang" />
                               </div>
                           </div>
-                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('gill')" :disabled="is_loading || !images['gill']"> <b><span>Proses</span></b></button>
+                          <p><span v-if="!training_result.gill.training_model_exist">Model Belum Dilatih!</span><br /></p>
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('gill')" :disabled="is_loading || !images['gill'] || !training_result.gill.training_model_exist"> <b><span>Proses</span></b></button>
                           <br /><br /><br />
                         </div>
-                        <div class = "col s4">
+                        <div class = "col s12 m12 l4">
                           <h5>Deteksi : Kulit Ikan</h5>
                           <div class="center">
                               <img v-show="images['skin']" v-bind:src="images['skin']" width="200" height="200" />
@@ -79,7 +81,8 @@
                                 <input class = "file-path validate" type = "text" placeholder = "Upload gambar kulit" />
                               </div>
                           </div>
-                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('skin')" :disabled="is_loading || !images['skin']"> <b><span>Proses</span></b></button>
+                          <p><span v-if="!training_result.skin.training_model_exist">Model Belum Dilatih!</span><br /></p>
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('skin')" :disabled="is_loading || !images['skin'] || !training_result.skin.training_model_exist"> <b><span>Proses</span></b></button>
                           <br /><br /><br />
                         </div>
                     </div>

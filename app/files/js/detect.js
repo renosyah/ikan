@@ -30,6 +30,17 @@ new Vue({
                     accuration: ""
                 },
             },
+            training_result : {
+                eye : {
+                    training_model_exist : false
+                },
+                gill : {
+                    training_model_exist : false
+                },
+                skin : {
+                    training_model_exist : false
+                }
+            },
             is_online : true,
             is_loading : false,
             host : {
@@ -50,7 +61,7 @@ new Vue({
         window.$('.dropdown-trigger').dropdown()
         window.$('.modal').modal({opacity:0.05,dismissible: false,preventScrolling:false})
         window.$('.sidenav').sidenav()
-
+        this.checkTrainingModelStatus()
     },
     computed : {
         getPageName(){
@@ -92,6 +103,29 @@ new Vue({
                 vm.images[param] = e.target.result
             }
             reader.readAsDataURL(file)
+        },
+        checkTrainingModel(param){
+            this.is_loading = true
+            axios({
+                method: 'post',
+                url:  this.baseUrl() + "training/" + param,
+                data: {}
+            }).then(response => {
+                    this.is_loading = false
+                    if (response.data.status == 404) {
+                        return
+                    }
+                    this.training_result[param].training_model_exist = response.data.is_exist
+                })
+                .catch(e => {
+                    console.log(e)
+                    this.is_loading = false
+                })
+        },
+        checkTrainingModelStatus(){
+            this.checkTrainingModel('eye')
+            this.checkTrainingModel('gill')
+            this.checkTrainingModel('skin')
         },
         switchPage(name){
             if ('URLSearchParams' in window) {

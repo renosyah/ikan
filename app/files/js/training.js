@@ -8,19 +8,22 @@ new Vue({
                     precision: "", 
                     target_param: "", 
                     test_accuration: "", 
-                    training_accuration: ""
+                    training_accuration: "",
+                    training_model_exist : false
                 },
                 gill : {
                     precision: "", 
                     target_param: "", 
                     test_accuration: "", 
-                    training_accuration: ""
+                    training_accuration: "",
+                    training_model_exist : false
                 },
                 skin : {
                     precision: "", 
                     target_param: "", 
                     test_accuration: "", 
-                    training_accuration: ""
+                    training_accuration: "",
+                    training_model_exist : false
                 }
             },
             is_online : true,
@@ -43,6 +46,7 @@ new Vue({
         window.$('.dropdown-trigger').dropdown()
         window.$('.modal').modal({opacity:0.05,dismissible: false,preventScrolling:false})
         window.$('.sidenav').sidenav()
+        this.checkTrainingModelStatus()
 
     },
     computed : {
@@ -67,6 +71,7 @@ new Vue({
 
                     this.training_result[response.data.target_param] = response.data
                     this.show_table = true
+                    this.checkTrainingModelStatus()
                     $('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
 
                 })
@@ -74,6 +79,29 @@ new Vue({
                     console.log(e)
                     this.is_loading = false
                 })
+        },
+        checkTrainingModel(param){
+            this.is_loading = true
+            axios({
+                method: 'post',
+                url:  this.baseUrl() + "training/" + param,
+                data: {}
+            }).then(response => {
+                    this.is_loading = false
+                    if (response.data.status == 404) {
+                        return
+                    }
+                    this.training_result[param].training_model_exist = response.data.is_exist
+                })
+                .catch(e => {
+                    console.log(e)
+                    this.is_loading = false
+                })
+        },
+        checkTrainingModelStatus(){
+            this.checkTrainingModel('eye')
+            this.checkTrainingModel('gill')
+            this.checkTrainingModel('skin')
         },
         switchPage(name){
             if ('URLSearchParams' in window) {
