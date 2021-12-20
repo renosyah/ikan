@@ -1,0 +1,44 @@
+/* Custom Stylesheet */
+
+
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+ .bg {
+    position: fixed;
+    background-color: #102553;
+    background-clip: border-box;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -1;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0; 
+}
+
+ .icon-block {
+    padding: 0 15px;
+}
+
+.icon-block .material-icons {
+    font-size: inherit;
+}
+
+.card-image{
+    height: 400px; /* Your height here */
+    overflow: hidden;
+}
+
+.card-content{
+    height: 300px; /* Your height here */
+    overflow: hidden;
+}
+.fixed-action-btn{
+    left: auto;
+    right: 1%; 
+    bottom: 5%;
+}
