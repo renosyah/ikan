@@ -1,4 +1,4 @@
-Example 5
+Ikan
 =========
 
 This example shows a scalable application structure.
