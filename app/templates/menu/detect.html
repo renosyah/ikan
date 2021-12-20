@@ -1,165 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>
-      Ikan
-    </title>
-
-    <!-- CSS  -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="./css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
-    <link href="./css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
-</head>
-
-<body>
-    <noscript>
-      <strong>We're sorry but Simple-21 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript> 
-
-  <div id="app"> 
-
-    <!---------BACKGROUND---------->
-  <div class="bg"></div>
-
-  <div class="container">
-    <div class="row">
-      <div class="col s12">
-        <div class="card">
-          <div class="card-image">
-            <img src="./img/bg.jpg">
-              <span class="card-title">Deteksi Kesegaran Ikan</span>
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width,initial-scale=1.0">
+      <title>
+         Ikan
+      </title>
+      <!-- CSS  -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link href="./css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+      <link href="./css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+   </head>
+   <body>
+      <noscript>
+         <strong>We're sorry but Simple-21 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      </noscript>
+      <div id="app">
+         <!---------BACKGROUND---------->
+         <div class="bg"></div>
+         <div class="container">
+            <div class="row">
+               <div class="col s12">
+                  <div class="card">
+                     <div class="card-image">
+                        <img src="./img/bg.jpg">
+                        <span class="card-title">Deteksi Kesegaran Ikan</span>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </div>  
-        </div>
-      </div>
-      <div class="row">
-        <div class="col s12">
-          <div class="card-panel">
-
-              <div class="row">
-                <div class="col s12">
-                    <div class = "row">
-                      <h5>Deteksi : Mata Ikan</h5>
-                      <div class="center">
-                        <img v-show="images['eye']" v-bind:src="images['eye']" width="200" height="200" />
-                      </div>
-                      <div class = "file-field input-field">
-                        <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
-                            <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'eye')" />
+            <div class="row">
+               <div class="col s12">
+                  <div class="card-panel">
+                     <div class="row">
+                        <div class = "col s4">
+                          <h5>Deteksi : Mata Ikan</h5>
+                          <div class="center">
+                              <img v-show="images['eye']" v-bind:src="images['eye']" width="200" height="200" />
+                          </div>
+                          <div class = "file-field input-field">
+                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
+                                <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'eye')" />
+                              </div>
+                              <div class = "file-path-wrapper">
+                                <input class = "file-path validate" type = "text" placeholder = "Upload gambar mata ikan" />
+                              </div>
+                          </div>
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('eye')" :disabled="is_loading || !images['eye']"> <b><span>Proses</span></b></button>
+                          <br /><br /><br />
                         </div>
-                        <div class = "file-path-wrapper">
-                            <input class = "file-path validate" type = "text" placeholder = "Upload gambar mata ikan" />
+                        <div class = "col s4">
+                          <h5>Deteksi : Insang Ikan</h5>
+                          <div class="center">
+                              <img v-show="images['gill']" v-bind:src="images['gill']" width="200" height="200" />
+                          </div>
+                          <div class = "file-field input-field">
+                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
+                                <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'gill')" />
+                              </div>
+                              <div class = "file-path-wrapper">
+                                <input class = "file-path validate" type = "text" placeholder = "Upload gambar insang" />
+                              </div>
+                          </div>
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('gill')" :disabled="is_loading || !images['gill']"> <b><span>Proses</span></b></button>
+                          <br /><br /><br />
+                        </div>
+                        <div class = "col s4">
+                          <h5>Deteksi : Kulit Ikan</h5>
+                          <div class="center">
+                              <img v-show="images['skin']" v-bind:src="images['skin']" width="200" height="200" />
+                          </div>
+                          <div class = "file-field input-field">
+                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
+                                <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'skin')" />
+                              </div>
+                              <div class = "file-path-wrapper">
+                                <input class = "file-path validate" type = "text" placeholder = "Upload gambar kulit" />
+                              </div>
+                          </div>
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('skin')" :disabled="is_loading || !images['skin']"> <b><span>Proses</span></b></button>
+                          <br /><br /><br />
                         </div>
                     </div>
-                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('eye')" :disabled="is_loading || !images['eye']"> <b><span>Proses</span></b></button>
-                    <br /><br /><br />
                   </div>
-                    <div class = "row">
-                      <h5>Deteksi : Insang Ikan</h5>
-                      <div class="center">
-                        <img v-show="images['gill']" v-bind:src="images['gill']" width="200" height="200" />
-                      </div>
-                      <div class = "file-field input-field">
-                        <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
-                            <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'gill')" />
-                        </div>
-                        <div class = "file-path-wrapper">
-                            <input class = "file-path validate" type = "text" placeholder = "Upload gambar insang" />
-                        </div>
-                    </div>
-                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('gill')" :disabled="is_loading || !images['gill']"> <b><span>Proses</span></b></button>
-                    <br /><br /><br />
-                  </div>
-                    <div class = "row">
-                      <h5>Deteksi : Kulit Ikan</h5>
-                      <div class="center">
-                        <img v-show="images['skin']" v-bind:src="images['skin']" width="200" height="200" />
-                      </div>
-                      <div class = "file-field input-field">
-                        <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
-                            <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'skin')" />
-                        </div>
-                        <div class = "file-path-wrapper">
-                            <input class = "file-path validate" type = "text" placeholder = "Upload gambar kulit" />
-                        </div>
-                    </div>
-                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('skin')" :disabled="is_loading || !images['skin']"> <b><span>Proses</span></b></button>
-                    <br /><br /><br />
-                  </div>
-                </div>
+               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="table" class="row" v-if="show_table">
-        <div class="col s12">
-          <div class="card-panel">
-            <h5>Hasil</h5>
-              <table>
-                <thead>
-                  <tr>
-                      <th>Parameter</th>
-                      <th>Akurasi</th>
-                      <th>Hasil</th>
-                  </tr>
-                </thead>
-        
-                <tbody>
-                  <tr>
-                    <td>Mata</td>
-                    <td>{{ detect_result.eye.accuration != "" ? detect_result.eye.accuration + "%" : "-"}}</td>
-                    <td>{{ detect_result.eye.prediction != "" ? detect_result.eye.prediction : "-"}}</td>
-                  </tr>
-                  <tr>
-                    <td>Insang</td>
-                    <td>{{ detect_result.gill.accuration != "" ? detect_result.gill.accuration + "%" : "-"}}</td>
-                    <td>{{ detect_result.gill.prediction != "" ? detect_result.gill.prediction : "-"}}</td>
-                  </tr>
-                  <tr>
-                    <td>Kulit</td>
-                    <td>{{ detect_result.skin.accuration != "" ? detect_result.skin.accuration + "%" : "-"}}</td>
-                    <td>{{ detect_result.skin.prediction != "" ? detect_result.skin.prediction : "-"}}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <br /><br />
-              <div class="center">
-                <h6><b> -Hasil- </b></h6>
-              </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col s12">
-          <div class="card-panel">
-            <br>
-            <div class="center row">
-              <div class="col s6">
-                <a href="/training" class="waves-effect waves-light btn-large blue" style="width: 100%;">Pelatihan</a>
-              </div>
-              <div class="col s6">
-                <a href="/" class="waves-effect waves-light btn-large blue" style="width: 100%;">Beranda</a>
-              </div>
+            <div id="table" class="row" v-if="show_table">
+               <div class="col s12">
+                  <div class="card-panel">
+                     <h5>Hasil</h5>
+                     <table>
+                        <thead>
+                           <tr>
+                              <th>Parameter</th>
+                              <th>Akurasi</th>
+                              <th>Hasil</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <td>Mata</td>
+                              <td>{{ detect_result.eye.accuration != "" ? detect_result.eye.accuration + "%" : "-"}}</td>
+                              <td>{{ detect_result.eye.prediction != "" ? detect_result.eye.prediction : "-"}}</td>
+                           </tr>
+                           <tr>
+                              <td>Insang</td>
+                              <td>{{ detect_result.gill.accuration != "" ? detect_result.gill.accuration + "%" : "-"}}</td>
+                              <td>{{ detect_result.gill.prediction != "" ? detect_result.gill.prediction : "-"}}</td>
+                           </tr>
+                           <tr>
+                              <td>Kulit</td>
+                              <td>{{ detect_result.skin.accuration != "" ? detect_result.skin.accuration + "%" : "-"}}</td>
+                              <td>{{ detect_result.skin.prediction != "" ? detect_result.skin.prediction : "-"}}</td>
+                           </tr>
+                        </tbody>
+                     </table>
+                     <br /><br />
+                     <div class="center">
+                        <h6><b> -Hasil- </b></h6>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </div>
-        </div>
+            <div class="row">
+               <div class="col s12">
+                  <div class="card-panel">
+                     <br>
+                     <div class="center row">
+                        <div class="col s6">
+                           <a href="/training" class="waves-effect waves-light btn-large blue" style="width: 100%;">Pelatihan</a>
+                        </div>
+                        <div class="col s6">
+                           <a href="/" class="waves-effect waves-light btn-large blue" style="width: 100%;">Beranda</a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
       </div>
-
-    </div>        
-  </div>
-  </div>
-    <!-- built files will be auto injected -->
-    <!--  Scripts-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="./js/materialize.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="./js/detect.js"></script>
-</body>
-
+      </div>
+      <!-- built files will be auto injected -->
+      <!--  Scripts-->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="./js/materialize.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+      <script src="./js/detect.js"></script>
+   </body>
 </html>
