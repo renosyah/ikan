@@ -8,6 +8,11 @@ new Vue({
                 gill : null,
                 skin : null
             },
+            images : {
+                eye : null,
+                gill : null,
+                skin : null
+            },
             detect_result : {
                 eye : {
                     prediction: "", 
@@ -68,7 +73,7 @@ new Vue({
                 }
                 this.detect_result[response.data.target_param] = response.data
                 this.show_table = true
-
+                $('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
             })
             .catch(errors => {
                 console.log(errors)
@@ -78,6 +83,15 @@ new Vue({
             let fs = e.target.files || e.dataTransfer.files
             if (!fs.length) return
             this.files[param] = fs[0]
+            this.createImage(param,this.files[param])
+        },
+        createImage(param,file) {
+            let reader = new FileReader()
+            let vm = this
+            reader.onload = function(e) {
+                vm.images[param] = e.target.result
+            }
+            reader.readAsDataURL(file)
         },
         switchPage(name){
             if ('URLSearchParams' in window) {

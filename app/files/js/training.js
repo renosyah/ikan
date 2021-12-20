@@ -67,6 +67,8 @@ new Vue({
 
                     this.training_result[response.data.target_param] = response.data
                     this.show_table = true
+                    $('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
+
                 })
                 .catch(e => {
                     console.log(e)

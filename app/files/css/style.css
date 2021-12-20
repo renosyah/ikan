@@ -20,6 +20,10 @@
     right: 0; 
 }
 
+img {
+    border: 5px solid #081229;
+}
+
  .icon-block {
     padding: 0 15px;
 }
