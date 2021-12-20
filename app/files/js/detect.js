@@ -2,6 +2,29 @@ new Vue({
     el: '#app',
     data() {
         return {
+            show_table : false,
+            files : {
+                eye : null,
+                gill : null,
+                skin : null
+            },
+            detect_result : {
+                eye : {
+                    prediction: "", 
+                    target_param: "", 
+                    accuration: ""
+                },
+                gill : {
+                    prediction: "", 
+                    target_param: "", 
+                    accuration: ""
+                },
+                skin : {
+                    prediction: "", 
+                    target_param: "", 
+                    accuration: ""
+                },
+            },
             is_online : true,
             is_loading : false,
             host : {
@@ -32,6 +55,30 @@ new Vue({
         }
     },
     methods : {
+        uploadImage(param){
+            let formData = new FormData();
+            formData.append('file', this.files[param]);
+            axios.post(this.baseUrl() + 'detect/process/' + param, formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                if (response.data.error != null){
+                    return
+                }
+                this.detect_result[response.data.target_param] = response.data
+                this.show_table = true
+
+            })
+            .catch(errors => {
+                console.log(errors)
+            }) 
+        },
+        onFileChange(e,param) {
+            let fs = e.target.files || e.dataTransfer.files
+            if (!fs.length) return
+            this.files[param] = fs[0]
+        },
         switchPage(name){
             if ('URLSearchParams' in window) {
                 var searchParams = new URLSearchParams(window.location.search);

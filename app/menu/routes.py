@@ -1,4 +1,4 @@
-from flask import request, render_template, send_from_directory
+from flask import request, render_template, send_from_directory, redirect
 from . import menu
 import os
 from flask import jsonify
@@ -11,6 +11,15 @@ from .RandInitialize import initialise
 from .Prediction import predict
 from scipy.optimize import minimize
 from tqdm import tqdm
+
+LABEL_NAMES = ["Segar","Agak Segar","Busuk"]
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+IMG_SIZE = 28
+DATADIR = os.path.join("app","dataset")
+CLASSES = ["0","1","2"]
+MAX_TRAINING_EXAMPLE = 400
+MAX_TRAINING_TEST = 300
+Y_LABEL_SIZE = 3
 
 @menu.after_request
 def add_header(response):
@@ -39,13 +48,6 @@ def training():
 
 @menu.route('/training/perform/<path:target_param>', methods=['GET','POST'])
 def training_perform(target_param):
-    IMG_SIZE = 28
-    DATADIR = os.path.join("app","dataset")
-    CLASSES = ["0","1","2"]
-    MAX_TRAINING_EXAMPLE = 400
-    MAX_TRAINING_TEST = 300
-    Y_LABEL_SIZE = 3
-
     training_data = create_training_data(CLASSES, DATADIR, IMG_SIZE, target_param)
     random.shuffle(training_data)
 
@@ -134,6 +136,26 @@ def create_training_data(classes, data_dir, img_size, param):
 def detect():
     return send_from_directory(os.path.join('templates','menu'), 'detect.html')
 
-@menu.route('/detect/process/<path:target_param>', methods=['GET'])
+
+
+@menu.route('/detect/process/<path:target_param>', methods=['GET', 'POST'])
 def detect_process(target_param):
-    return jsonify({'target_param' : target_param, 'prediction' : "-", 'accuration' : 30})
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({}), 500
+            
+        file = request.files['file']
+
+        img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
+        new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)) 
+        vec = np.array(new_array).reshape(-1, IMG_SIZE * IMG_SIZE)
+        vec = vec / 255
+
+        # Loading Thetas
+        Theta1 = np.loadtxt(os.path.join('app','training',target_param,'Theta1.csv'), delimiter=",")
+        Theta2 = np.loadtxt(os.path.join('app','training',target_param,'Theta2.csv'), delimiter=",")
+
+        # Calling function for prediction
+        pred,acc = predict(Theta1, Theta2, vec)
+
+    return jsonify({'target_param' : target_param, 'prediction' : LABEL_NAMES[pred[0]], 'accuration' : "{:f}".format(acc[pred[0]] * 100)})

@@ -65,7 +65,6 @@ new Vue({
                         return
                     }
 
-                    console.log(response)
                     this.training_result[response.data.target_param] = response.data
                     this.show_table = true
                 })

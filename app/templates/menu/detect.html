@@ -45,39 +45,39 @@
                       <h5>Deteksi : Mata Ikan</h5>
                       <div class = "file-field input-field">
                         <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
-                            <input type="file" accept="image/png, image/gif, image/jpeg" name="file_fish_eye" />
+                            <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'eye')" />
                         </div>
                         <div class = "file-path-wrapper">
                             <input class = "file-path validate" type = "text" placeholder = "Upload gambar mata ikan" />
                         </div>
                     </div>
-                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text"> <b><span>Proses</span></b></button>
+                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" @click="uploadImage('eye')" :disabled="is_loading"> <b><span>Proses</span></b></button>
                     <br /><br /><br />
                   </div>
                     <div class = "row">
                       <h5>Deteksi : Insang Ikan</h5>
                       <div class = "file-field input-field">
                         <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
-                            <input type="file" accept="image/png, image/gif, image/jpeg" name="file_fish_gill" />
+                            <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'gill')" />
                         </div>
                         <div class = "file-path-wrapper">
                             <input class = "file-path validate" type = "text" placeholder = "Upload gambar insang" />
                         </div>
                     </div>
-                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text"> <b><span>Proses</span></b></button>
+                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" @click="uploadImage('gill')" :disabled="is_loading"> <b><span>Proses</span></b></button>
                     <br /><br /><br />
                   </div>
                     <div class = "row">
                       <h5>Deteksi : Kulit Ikan</h5>
                       <div class = "file-field input-field">
                         <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
-                            <input type="file" accept="image/png, image/gif, image/jpeg" name="file_fish_skin" />
+                            <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'skin')" />
                         </div>
                         <div class = "file-path-wrapper">
                             <input class = "file-path validate" type = "text" placeholder = "Upload gambar kulit" />
                         </div>
                     </div>
-                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text"> <b><span>Proses</span></b></button>
+                    <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" @click="uploadImage('skin')" :disabled="is_loading"> <b><span>Proses</span></b></button>
                     <br /><br /><br />
                   </div>
                 </div>
@@ -86,7 +86,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" v-if="show_table">
         <div class="col s12">
           <div class="card-panel">
             <h5>Hasil</h5>
@@ -102,18 +102,18 @@
                 <tbody>
                   <tr>
                     <td>Mata</td>
-                    <td>- %</td>
-                    <td>-</td>
+                    <td>{{ detect_result.eye.accuration != "" ? detect_result.eye.accuration + "%" : "-"}}</td>
+                    <td>{{ detect_result.eye.prediction != "" ? detect_result.eye.prediction : "-"}}</td>
                   </tr>
                   <tr>
                     <td>Insang</td>
-                    <td>- %</td>
-                    <td>-</td>
+                    <td>{{ detect_result.gill.accuration != "" ? detect_result.gill.accuration + "%" : "-"}}</td>
+                    <td>{{ detect_result.gill.prediction != "" ? detect_result.gill.prediction : "-"}}</td>
                   </tr>
                   <tr>
                     <td>Kulit</td>
-                    <td>- %</td>
-                    <td>-</td>
+                    <td>{{ detect_result.skin.accuration != "" ? detect_result.skin.accuration + "%" : "-"}}</td>
+                    <td>{{ detect_result.skin.prediction != "" ? detect_result.skin.prediction : "-"}}</td>
                   </tr>
                 </tbody>
               </table>
