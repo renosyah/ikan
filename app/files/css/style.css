@@ -20,6 +20,19 @@
     right: 0; 
 }
 
+.bg_img {
+    position: fixed;
+    background-image: url("/img/bg.jpg");
+    background-clip: border-box;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -1;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0; 
+}
+
 img {
     border: 5px solid #081229;
 }

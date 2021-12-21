@@ -8,6 +8,7 @@ new Vue({
                 gill : null,
                 skin : null
             },
+            img_size : 28,
             images : {
                 eye : null,
                 gill : null,
@@ -74,6 +75,7 @@ new Vue({
         uploadImage(param){
             let formData = new FormData();
             formData.append('file', this.files[param]);
+            formData.append('img_size', this.img_size)
             axios.post(this.baseUrl() + 'detect/process/' + param, formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data'

@@ -154,17 +154,18 @@ def allowed_file(filename):
 @menu.route('/detect/process/<path:target_param>', methods=['GET', 'POST'])
 def detect_process(target_param):
     if request.method == 'POST':
+        img_size = int(request.form["img_size"]) if "img_size" in request.form else IMG_SIZE
         file = request.files['file']
 
         if 'file' not in request.files:
             return jsonify({}), 500
-            
+
         if not allowed_file(file.filename):
             return jsonify({}), 500
 
         img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
-        new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)) 
-        vec = np.array(new_array).reshape(-1, IMG_SIZE * IMG_SIZE)
+        new_array = cv2.resize(img_array, (img_size, img_size)) 
+        vec = np.array(new_array).reshape(-1, img_size * img_size)
         vec = vec / 255
 
         # Loading Thetas
