@@ -3,6 +3,12 @@ new Vue({
     data() {
         return {
             show_table : false,
+            query : {
+                input_layer : 784,
+                hidden_layer : 100,
+                max_training_example : 400,
+                max_training_test : 300
+            },
             training_result : {
                 eye : {
                     precision: "", 
@@ -62,7 +68,7 @@ new Vue({
             axios({
                 method: 'post',
                 url:  this.baseUrl() + "training/perform/" + param,
-                data: {}
+                data: this.query
             }).then(response => {
                     this.is_loading = false
                     if (response.data.status == 404) {

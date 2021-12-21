@@ -10,10 +10,9 @@ from .Model import neural_network
 from .RandInitialize import initialise
 from .Prediction import predict
 from scipy.optimize import minimize
-from tqdm import tqdm
 
 LABEL_NAMES = ["Segar","Agak Segar","Busuk"]
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
 IMG_SIZE = 28
 DATADIR = os.path.join("app","dataset")
 CLASSES = ["0","1","2"]
@@ -52,6 +51,13 @@ def training_model(target_param):
 
 @menu.route('/training/perform/<path:target_param>', methods=['GET','POST'])
 def training_perform(target_param):
+
+    content_body = request.json
+    input_layer = int(content_body["input_layer"]) if "input_layer" in content_body else (IMG_SIZE * IMG_SIZE)
+    hidden_layer = int(content_body["hidden_layer"])  if "hidden_layer" in content_body else 100
+    max_training_example = int(content_body["max_training_example"])  if "max_training_example" in content_body else MAX_TRAINING_EXAMPLE
+    max_training_test = int(content_body["max_training_test"]) if "max_training_test" in content_body else MAX_TRAINING_TEST
+
     training_data = create_training_data(CLASSES, DATADIR, IMG_SIZE, target_param)
     random.shuffle(training_data)
 
@@ -68,16 +74,16 @@ def training_perform(target_param):
     X = X / 255
 
     # Splitting data into training set with 60,000 examples
-    X_train = X[:MAX_TRAINING_EXAMPLE, :]
-    y_train = y[:MAX_TRAINING_EXAMPLE]
+    X_train = X[:max_training_example, :]
+    y_train = y[:max_training_example]
     
     # Splitting data into testing set with 10,000 examples
-    X_test = X[MAX_TRAINING_TEST:, :]
-    y_test = y[MAX_TRAINING_TEST:]
+    X_test = X[max_training_test:, :]
+    y_test = y[max_training_test:]
     
     m = X.shape[0]
-    input_layer_size = IMG_SIZE * IMG_SIZE
-    hidden_layer_size = 100
+    input_layer_size = input_layer
+    hidden_layer_size = hidden_layer
     num_labels = Y_LABEL_SIZE
     
     # Randomly initialising Thetas
@@ -116,7 +122,7 @@ def training_perform(target_param):
     np.savetxt(os.path.join('app','training',target_param,'Theta1.csv'), Theta1, delimiter=",")
     np.savetxt(os.path.join('app','training',target_param,'Theta2.csv'), Theta2, delimiter=",")
 
-    return jsonify({'precision':str(true_positive/(true_positive + false_positive)),'target_param' : target_param, 'test_accuration' : str(format((np.mean(test == y_test) * 100))), 'training_accuration' : str(format((np.mean(training == y_train) * 100)))})
+    return jsonify({'precision':str(true_positive/(true_positive + false_positive)),'target_param' : target_param, 'test_accuration' : str(format((np.mean(test == y_test) * 100))), 'training_accuration' : str(format((np.mean(training == y_train) * 100)))}), 200
 
 
 def create_training_data(classes, data_dir, img_size, param):
@@ -141,14 +147,20 @@ def detect():
     return send_from_directory(os.path.join('templates','menu'), 'detect.html')
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @menu.route('/detect/process/<path:target_param>', methods=['GET', 'POST'])
 def detect_process(target_param):
     if request.method == 'POST':
+        file = request.files['file']
+
         if 'file' not in request.files:
             return jsonify({}), 500
             
-        file = request.files['file']
+        if not allowed_file(file.filename):
+            return jsonify({}), 500
 
         img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
         new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)) 
@@ -162,4 +174,6 @@ def detect_process(target_param):
         # Calling function for prediction
         pred,acc = predict(Theta1, Theta2, vec)
 
-    return jsonify({'target_param' : target_param, 'prediction' : LABEL_NAMES[pred[0]], 'accuration' : "{:f}".format(acc[pred[0]] * 100)})
+        return jsonify({'target_param' : target_param, 'prediction' : LABEL_NAMES[pred[0]], 'accuration' : "{:f}".format(acc[pred[0]] * 100)}), 200
+
+    return jsonify({}), 200

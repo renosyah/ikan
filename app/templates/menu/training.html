@@ -25,7 +25,7 @@
   <div class="bg"></div>
 
   <div class="container">
-    <div class="row">
+    <div class="row hide-on-med-and-down">
       <div class="col s12">
         <div class="card">
           <div class="card-image">
@@ -35,9 +35,35 @@
           </div>  
         </div>
       </div>
+      <h4 class="center white-text hide-on-large-only">Pelatihan Model</h4>
 
       <div class="row">
-        <div class="col s4">
+        <div class="col s12">
+          <div class="card-panel">
+            <h5>Pengaturan</h5>
+            <div class="row">
+              <div class="input-field col s12 m12 l3">
+                <input id="input_layer" type="number" class="validate" value="784" v-model="query.input_layer">
+                <label for="input_layer">Jumlah Input Layer</label>
+              </div>
+              <div class="input-field col s12 m12 l3">
+                <input id="hidden_layer" type="number" class="validate" value="100" v-model="query.hidden_layer">
+                <label for="hidden_layer">Jumlah Hidden Layer</label>
+              </div>
+              <div class="input-field col s12 m12 l3">
+                <input id="max_training_example" type="number" class="validate" value="400" v-model="query.max_training_example">
+                <label for="max_training_example">Maximum Training Example</label>
+              </div>
+              <div class="input-field col s12 m12 l3">
+                <input id="max_training_test" type="number" class="validate" value="300" v-model="query.max_training_test">
+                <label for="max_training_test">Maximum Training Test</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <div class="row">
+        <div class="col s12 m12 l4">
           <div class="card-panel">
             <h5>Pelatihan : Mata ikan</h5>
             <p><span v-if="training_result.eye.training_model_exist">Model Telah Dilatih!</span><br /></p>
@@ -45,7 +71,7 @@
           </div>
         </div>
 
-        <div class="col s4">
+        <div class="col s12 m12 l4">
           <div class="card-panel">
             <h5>Pelatihan : Insang ikan</h5>
             <p><span v-if="training_result.gill.training_model_exist">Model Telah Dilatih!</span><br /></p>
@@ -54,7 +80,7 @@
         </div>
 
 
-        <div class="col s4">
+        <div class="col s12 m12 l4">
           <div class="card-panel">
             <h5>Pelatihan : Kulit</h5>
             <p><span v-if="training_result.skin.training_model_exist">Model Telah Dilatih!</span><br /></p>
