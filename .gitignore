@@ -24,9 +24,17 @@ __pycache__/
 app/__pycache__/
 app/menu/__pycache__/
 
-app/dataset/eye/
-app/dataset/gill/
-app/dataset/skin/
+app/dataset/eye/0
+app/dataset/gill/0
+app/dataset/skin/0
+
+app/dataset/eye/1
+app/dataset/gill/1
+app/dataset/skin/1
+
+app/dataset/eye/2
+app/dataset/gill/2
+app/dataset/skin/2
 
 app/training/eye/
 app/training/gill/
