@@ -1,9 +1,11 @@
 import numpy as np
- 
+
+# ini adalah fungsi neural network
+# fungsi standar yang digunakan
+# untuk neural network
 def neural_network(nn_params, input_layer_size, hidden_layer_size, num_labels, X, y, lamb):
     
-    # For each label between 0,1 and 2, there will be a vector of length 3
-    # where the ith element will be 1 if the label equals i
+    # For each label between 0, 1 and 2, there will be a vector of length 3
     y_label_size = 3
 
     # Weights are split back to Theta1, Theta2
