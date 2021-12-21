@@ -21,6 +21,8 @@ bin/
 main
 
 __pycache__/
+app/__pycache__/
+app/menu/__pycache__/
 
 app/dataset/eye/
 app/dataset/gill/
