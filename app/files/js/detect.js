@@ -11,9 +11,9 @@ new Vue({
             img_size_w : 28,
             img_size_h : 28,
             images : {
-                eye : "./img/img_holder.png",
-                gill : "./img/img_holder.png",
-                skin : "./img/img_holder.png",
+                eye : "./img/upload_image.png",
+                gill : "./img/upload_image.png",
+                skin : "./img/upload_image.png",
             },
             detect_result : {
                 eye : {
