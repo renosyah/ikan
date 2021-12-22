@@ -72,21 +72,21 @@ def training_perform(target_param):
 
     training_data = create_training_data(CLASSES, DATADIR, IMG_SIZE, target_param)
 
-    X,y = makeXandY(training_data, input_layer)
+    X,y = make_X_and_y(training_data, input_layer)
 
-    X_train,y_train = makeTrainingXandY(X,y,max_training_example)
+    X_train,y_train = make_training_X_and_y(X,y,max_training_example)
 
-    X_test,y_test = makeTestXandY(X,y,max_training_test)
+    X_test,y_test = make_test_X_and_y(X,y,max_training_test)
 
-    initial_Theta1,initial_Theta2 = initializeTheta(input_layer,hidden_layer)
+    initial_Theta1,initial_Theta2 = initialize_theta(input_layer,hidden_layer)
 
-    Theta1,Theta2 = makeTrainingTheta(initial_Theta1,initial_Theta2,input_layer, hidden_layer, X_train, y_train)
+    Theta1,Theta2 = make_training_theta(initial_Theta1,initial_Theta2,input_layer, hidden_layer, X_train, y_train)
 
-    test, training = testAndTraining(Theta1, Theta2, X_test, X_train)
+    test, training = test_and_training(Theta1, Theta2, X_test, X_train)
 
-    precision = getPrecision(training,y_train)
+    precision = get_precision(training,y_train)
     
-    savingTrainingModel(target_param,Theta1,Theta2)
+    saving_training_model(target_param,Theta1,Theta2)
 
     return jsonify({
         'precision': precision,
@@ -118,13 +118,9 @@ def detect_process(target_param):
         if not allowed_file(file.filename):
             return jsonify({}), 500
 
-        img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
-        new_array = cv2.resize(img_array, (img_size, img_size)) 
-        vec = np.array(new_array).reshape(-1, img_size * img_size)
-        vec = vec / 255
+        vec = make_input_vector(file, img_size)
 
-        Theta1 = np.loadtxt(os.path.join('app','training',target_param,'Theta1.csv'), delimiter=",")
-        Theta2 = np.loadtxt(os.path.join('app','training',target_param,'Theta2.csv'), delimiter=",")
+        Theta1,Theta2 = load_training_model(target_param)
 
         pred,acc = predict(Theta1, Theta2, vec)
 
@@ -169,10 +165,8 @@ def allowed_file(filename):
 # yang di ekstrak dari dataset
 # yang setiap data akan di ubah ke numpy array
 # dan di normalisasikan
-def makeXandY(training_data, input_layer_size):
-    X = []
-    y = []
-
+def make_X_and_y(training_data, input_layer_size):
+    X,y = [], []
     for features,label in training_data:
         X.append(features)
         y.append(label)
@@ -185,24 +179,24 @@ def makeXandY(training_data, input_layer_size):
 
 # fungsi untuk membuat array yang
 # akan digunakan sebagai data training
-def makeTrainingXandY(X,y,max_training_example):
+def make_training_X_and_y(X,y,max_training_example):
     return X[:max_training_example, :], y[:max_training_example]
 
 # fungsi untuk membuat array yang
 # akan digunakan sebagai data testing
-def makeTestXandY(X,y,max_training_test):
+def make_test_X_and_y(X,y,max_training_test):
     return X[max_training_test:, :], y[max_training_test:]
 
 # fungsi untuk meyiapkan theta
 # akan digunakan sebagai model training
-def initializeTheta(input_layer,hidden_layer):
+def initialize_theta(input_layer,hidden_layer):
     return initialise(hidden_layer, input_layer), initialise(Y_LABEL_SIZE, hidden_layer)
 
 # fungsi untuk membuat theta
 # akan digunakan sebagai model training
 # menggunakan library dan skrip konfigurasi
 # yang sering dipakai untuk neural network
-def makeTrainingTheta(initial_Theta1,initial_Theta2,input_layer_size, hidden_layer_size, X_train, y_train):
+def make_training_theta(initial_Theta1,initial_Theta2,input_layer_size, hidden_layer_size, X_train, y_train):
     maxiter = 100
     lambda_reg = 0.1
     myargs = (input_layer_size, hidden_layer_size, Y_LABEL_SIZE, X_train, y_train, lambda_reg)
@@ -220,14 +214,14 @@ def makeTrainingTheta(initial_Theta1,initial_Theta2,input_layer_size, hidden_lay
 # akan memberikan hasil training
 # dan test terhadap model training
 # yang telah di buat
-def testAndTraining(Theta1, Theta2, X_test, X_train):
+def test_and_training(Theta1, Theta2, X_test, X_train):
     test, _ = predict(Theta1, Theta2, X_test)
     training, _ = predict(Theta1, Theta2, X_train)
     return test, training
 
 # fungsi untuk mendapatkan presisi
 # dengan mengunakan true positif dan false positif 
-def getPrecision(training,y_train):
+def get_precision(training,y_train):
     true_positive = 0
     for i in range(len(training)):
         if training[i] == y_train[i]:
@@ -238,6 +232,21 @@ def getPrecision(training,y_train):
 # fungsi untuk menyimpan hasil training
 # model yang nantinya akan digunakan kembali
 # dalam proses deteksi
-def savingTrainingModel(target_param,Theta1,Theta2):
+def saving_training_model(target_param,Theta1,Theta2):
     np.savetxt(os.path.join('app','training',target_param,'Theta1.csv'), Theta1, delimiter=",")
     np.savetxt(os.path.join('app','training',target_param,'Theta2.csv'), Theta2, delimiter=",")
+
+
+# fungsi untuk mengambil hasil training
+# model yang digunakan untuk proses deteksi
+def load_training_model(target_param):
+    Theta1 = np.loadtxt(os.path.join('app','training',target_param,'Theta1.csv'), delimiter=",")
+    Theta2 = np.loadtxt(os.path.join('app','training',target_param,'Theta2.csv'), delimiter=",")
+    return Theta1, Theta2
+
+def make_input_vector(file, img_size):
+    img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
+    new_array = cv2.resize(img_array, (img_size, img_size)) 
+    vec = np.array(new_array).reshape(-1, img_size * img_size)
+    vec = vec / 255
+    return vec
