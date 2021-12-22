@@ -24,6 +24,30 @@
     <!---------BACKGROUND---------->
   <div class="bg"></div>
 
+  <!---------LOADING---------->
+  <div class="preloader-background" v-show="is_loading">
+    <div class="valign-wrapper" style="width:100%;height:100%;position: absolute;">
+        <div class="valign" style="width:100%;">
+            <div class="container">
+              <div class="row">
+                    <div class="center col s12 m6 offset-m3">
+                    <div class="preloader-wrapper big active">
+                        <div class="spinner-layer spinner-blue-only">
+                          <div class="circle-clipper left">
+                          <div class="circle"></div>
+                          </div><div class="gap-patch">
+                          <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                          <div class="circle"></div>
+                          </div>
+                        </div>
+                        </div>
+                    </div>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
   <div class="container">
     <div class="row hide-on-med-and-down">
       <div class="col s12">

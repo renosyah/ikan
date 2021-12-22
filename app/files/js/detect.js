@@ -11,9 +11,9 @@ new Vue({
             img_size_w : 28,
             img_size_h : 28,
             images : {
-                eye : null,
-                gill : null,
-                skin : null
+                eye : "./img/img_holder.png",
+                gill : "./img/img_holder.png",
+                skin : "./img/img_holder.png",
             },
             detect_result : {
                 eye : {
@@ -103,7 +103,8 @@ new Vue({
             let fs = e.target.files || e.dataTransfer.files
             if (!fs.length) return
             this.files[param] = fs[0]
-            this.createImage(param,this.files[param])
+            this.createImage(param, this.files[param])
+            this.uploadImage(param)
         },
         createImage(param,file) {
             let reader = new FileReader()

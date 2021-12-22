@@ -35,7 +35,10 @@ def add_header(response):
 # static file seperti js dan css
 @menu.route('/<path:folder_name>/<path:filename>', methods=['GET'])
 def serve_static(folder_name,filename):
-    return send_from_directory(os.path.join('files',folder_name), filename)
+    return send_from_directory(
+        os.path.join('files',folder_name),
+        filename
+    )
 
 # index routes
 # fungsi route untuk menampilkan 
@@ -49,7 +52,9 @@ def index():
 # halaman training
 @menu.route('/training', methods=['GET'])
 def training():
-    return send_from_directory(os.path.join('templates','menu'), 'training.html')
+    return send_from_directory(
+        os.path.join('templates','menu'), 'training.html'
+    )
 
 # training routes
 # fungsi route untuk menangani
@@ -57,44 +62,95 @@ def training():
 # data model training
 @menu.route('/training/<path:target_param>', methods=['GET','POST'])
 def training_model(target_param):
-    return jsonify({'is_exist': os.path.exists(os.path.join('app','training',target_param,'Theta1.csv')),'target_param' : target_param}) 
+    return jsonify({
+        'is_exist': os.path.exists(
+            os.path.join('app','training',target_param,'Theta1.csv')
+        ),
+        'target_param' : target_param
+    }) 
 
 # training routes
 # fungsi route untuk menangani
 # permintaan API proses training
-@menu.route('/training/perform/<path:target_param>', methods=['GET','POST'])
+@menu.route('/training/perform/<path:target_param>', methods=['POST'])
 def training_perform(target_param):
-
     content_body = request.json
-    img_size_w = int(content_body["img_size_w"]) if "img_size_w" in content_body else IMG_SIZE_W
-    img_size_h = int(content_body["img_size_h"]) if "img_size_h" in content_body else IMG_SIZE_H
-    hidden_layer = int(content_body["hidden_layer"])  if "hidden_layer" in content_body else 100
-    max_training_example = int(content_body["max_training_example"])  if "max_training_example" in content_body else MAX_TRAINING_EXAMPLE
-    max_training_test = int(content_body["max_training_test"]) if "max_training_test" in content_body else MAX_TRAINING_TEST
 
-    training_data = create_training_data(CLASSES, DATADIR, img_size_w, img_size_h, target_param)
+    img_size_w, img_size_h = get_image_size_from_body(
+        content_body
+    )
 
-    X,y = make_X_and_y(training_data, img_size_w, img_size_h)
+    hidden_layer, max_training_example, max_training_test = get_setting_from_body(
+        content_body
+    )
 
-    X_train,y_train = make_training_X_and_y(X,y,max_training_example)
+    training_data = create_training_data(
+        CLASSES,
+        DATADIR,
+        img_size_w,
+        img_size_h,
+        target_param
+    )
 
-    X_test,y_test = make_test_X_and_y(X,y,max_training_test)
+    X,y = make_X_and_y(
+        training_data,
+        img_size_w,
+        img_size_h
+    )
 
-    initial_Theta1,initial_Theta2 = initialize_theta(img_size_w * img_size_h,hidden_layer)
+    X_train,y_train = make_training_X_and_y(
+        X,
+        y,
+        max_training_example
+    )
 
-    Theta1,Theta2 = make_training_theta(initial_Theta1,initial_Theta2, img_size_w * img_size_h, hidden_layer, X_train, y_train)
+    X_test,y_test = make_test_X_and_y(
+        X,
+        y,
+        max_training_test
+    )
 
-    test, training = test_and_training(Theta1, Theta2, X_test, X_train)
+    initial_Theta1,initial_Theta2 = initialize_theta(
+        img_size_w * img_size_h,
+        hidden_layer
+    )
 
-    precision = get_precision(training,y_train)
+    Theta1,Theta2 = make_training_theta(
+        initial_Theta1,
+        initial_Theta2,
+        img_size_w * img_size_h,
+        hidden_layer,
+        X_train,
+        y_train
+    )
+
+    test, training = test_and_training(
+        Theta1,
+        Theta2,
+        X_test,
+        X_train
+    )
+
+    precision = get_precision(
+        training,
+        y_train
+    )
     
-    saving_training_model(target_param,Theta1,Theta2)
+    saving_training_model(
+        target_param,
+        Theta1,
+        Theta2
+    )
 
     return jsonify({
         'precision': precision,
         'target_param' : target_param,
-        'test_accuration' : str(format((np.mean(test == y_test) * 100))),
-        'training_accuration' : str(format((np.mean(training == y_train) * 100)))
+        'test_accuration' : str(
+            format((np.mean(test == y_test) * 100))
+        ),
+        'training_accuration' : str(
+            format((np.mean(training == y_train) * 100))
+        )
     }), 200
 
 # detect routes
@@ -103,36 +159,50 @@ def training_perform(target_param):
 # merender halaman deteksi
 @menu.route('/detect', methods=['GET'])
 def detect():
-    return send_from_directory(os.path.join('templates','menu'), 'detect.html')
+    return send_from_directory(
+        os.path.join('templates','menu'),
+        'detect.html'
+    )
 
 # detect routes
 # fungsi route untuk menangani
 # permintaan API proses deteksi
-@menu.route('/detect/process/<path:target_param>', methods=['GET', 'POST'])
+@menu.route('/detect/process/<path:target_param>', methods=['POST'])
 def detect_process(target_param):
-    if request.method == 'POST':
-        img_size_w = int(request.form["img_size_w"]) if "img_size_w" in request.form else IMG_SIZE_W
-        img_size_h = int(request.form["img_size_h"]) if "img_size_h" in request.form else IMG_SIZE_H
 
-        file = request.files['file']
+    img_size_w, img_size_h = get_image_size(
+        request
+    )
 
-        if 'file' not in request.files:
-            return jsonify({}), 500
+    file = request.files['file']
 
-        if not allowed_file(file.filename):
-            return jsonify({}), 500
+    if 'file' not in request.files:
+        return jsonify({}), 500
 
-        vec = make_input_vector(file, img_size_w, img_size_h)
+    if not allowed_file(file.filename):
+        return jsonify({}), 500
 
-        Theta1,Theta2 = load_training_model(target_param)
+    vec = make_input_vector(
+        file,
+        img_size_w,
+        img_size_h
+    )
 
-        pred,acc = predict(Theta1, Theta2, vec)
+    Theta1,Theta2 = load_training_model(
+        target_param
+    )
 
-        return jsonify({
-            'target_param' : target_param,
-            'prediction' : LABEL_NAMES[pred[0]],
-            'accuration' : "{:f}".format(acc[pred[0]] * 100)
-        }), 200
+    pred,acc = predict(
+        Theta1,
+        Theta2,
+        vec
+    )
+
+    return jsonify({
+        'target_param' : target_param,
+        'prediction' : LABEL_NAMES[pred[0]],
+        'accuration' : "{:f}".format(acc[pred[0]] * 100)
+    }), 200
 
     return jsonify({}), 200
 
@@ -142,12 +212,32 @@ def detect_process(target_param):
 def create_training_data(classes, data_dir, img_size_w, img_size_h, param):
     result = []
     for clas in classes:
-        path = os.path.join(data_dir,param,clas) 
+        path = os.path.join(
+            data_dir,
+            param,clas
+        ) 
         for img in os.listdir(path):
             try:
-                img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_GRAYSCALE)
-                new_array = cv2.resize(img_array, (img_size_w, img_size_h))
-                result.append([new_array, classes.index(clas)])
+                img_array = cv2.imread(
+                    os.path.join(
+                        path,
+                        img
+                    ),
+                    cv2.IMREAD_GRAYSCALE
+                )
+                new_array = cv2.resize(
+                    img_array,
+                    (
+                        img_size_w,
+                        img_size_h
+                    )
+                )
+                result.append(
+                    [
+                        new_array,
+                        classes.index(clas)
+                    ]
+                )
 
             except OSError as e:
                 print("OSErrroBad img most likely", e, os.path.join(path,img))
@@ -155,7 +245,9 @@ def create_training_data(classes, data_dir, img_size_w, img_size_h, param):
             except Exception as e:
                print("general exception", e, os.path.join(path,img))
 
-    random.shuffle(result)
+    random.shuffle(
+        result
+    )
     return result
 
 # fungsi untuk melist format
@@ -171,11 +263,16 @@ def allowed_file(filename):
 # dan di normalisasikan
 def make_X_and_y(training_data, input_layer_size_w, input_layer_size_h):
     X,y = [], []
+
     for features,label in training_data:
         X.append(features)
         y.append(label)
         
-    X = np.array(X).reshape(-1, input_layer_size_h * input_layer_size_w)
+    X = np.array(X).reshape(
+        -1,
+        input_layer_size_h * input_layer_size_w
+    
+    )
     X = X / 255
 
     return X,y
@@ -203,14 +300,51 @@ def initialize_theta(input_layer,hidden_layer):
 def make_training_theta(initial_Theta1,initial_Theta2,input_layer_size, hidden_layer_size, X_train, y_train):
     maxiter = 100
     lambda_reg = 0.1
-    myargs = (input_layer_size, hidden_layer_size, Y_LABEL_SIZE, X_train, y_train, lambda_reg)
 
-    initial_nn_params = np.concatenate((initial_Theta1.flatten(), initial_Theta2.flatten()))
-    results = minimize(neural_network, x0=initial_nn_params, args=myargs, options={'disp': True, 'maxiter': maxiter}, method="L-BFGS-B", jac=True)
+    myargs = (
+        input_layer_size,
+        hidden_layer_size,
+        Y_LABEL_SIZE,
+        X_train,
+        y_train,
+        lambda_reg
+    )
+
+    initial_nn_params = np.concatenate(
+        (
+            initial_Theta1.flatten(),
+            initial_Theta2.flatten()
+        )
+    )
+
+    results = minimize(
+        neural_network,
+        x0=initial_nn_params,
+        args=myargs,
+        options={
+            'disp': True,
+            'maxiter': maxiter
+        },
+        method="L-BFGS-B",
+        jac=True
+    )
+
     nn_params = results["x"]
     
-    Theta1 = np.reshape(nn_params[:hidden_layer_size * (input_layer_size + 1)], (hidden_layer_size, input_layer_size + 1))
-    Theta2 = np.reshape(nn_params[hidden_layer_size * (input_layer_size + 1):], (Y_LABEL_SIZE, hidden_layer_size + 1))
+    Theta1 = np.reshape(
+        nn_params[:hidden_layer_size * (input_layer_size + 1)],
+        (
+            hidden_layer_size,
+            input_layer_size + 1
+        )
+    )
+    Theta2 = np.reshape(
+        nn_params[hidden_layer_size * (input_layer_size + 1):],
+        (
+            Y_LABEL_SIZE,
+            hidden_layer_size + 1
+        )
+    )
 
     return Theta1,Theta2
 
@@ -219,8 +353,16 @@ def make_training_theta(initial_Theta1,initial_Theta2,input_layer_size, hidden_l
 # dan test terhadap model training
 # yang telah di buat
 def test_and_training(Theta1, Theta2, X_test, X_train):
-    test, _ = predict(Theta1, Theta2, X_test)
-    training, _ = predict(Theta1, Theta2, X_train)
+    test, _ = predict(
+        Theta1,
+        Theta2,
+        X_test
+    )
+    training, _ = predict(
+        Theta1,
+        Theta2,
+        X_train
+    )
     return test, training
 
 # fungsi untuk mendapatkan presisi
@@ -237,23 +379,73 @@ def get_precision(training,y_train):
 # model yang nantinya akan digunakan kembali
 # dalam proses deteksi
 def saving_training_model(target_param,Theta1,Theta2):
-    np.savetxt(os.path.join('app','training',target_param,'Theta1.csv'), Theta1, delimiter=",")
-    np.savetxt(os.path.join('app','training',target_param,'Theta2.csv'), Theta2, delimiter=",")
+    np.savetxt(
+        os.path.join('app','training',target_param,'Theta1.csv'),
+        Theta1,
+        delimiter=","
+    )
+    np.savetxt(
+        os.path.join('app','training',target_param,'Theta2.csv'),
+        Theta2,
+        delimiter=","
+    )
 
 
 # fungsi untuk mengambil hasil training
 # model yang digunakan untuk proses deteksi
 def load_training_model(target_param):
-    Theta1 = np.loadtxt(os.path.join('app','training',target_param,'Theta1.csv'), delimiter=",")
-    Theta2 = np.loadtxt(os.path.join('app','training',target_param,'Theta2.csv'), delimiter=",")
+    Theta1 = np.loadtxt(
+        os.path.join('app','training',target_param,'Theta1.csv'),
+        delimiter=","
+    )
+    Theta2 = np.loadtxt(
+        os.path.join('app','training',target_param,'Theta2.csv'),
+        delimiter=","
+    )
     return Theta1, Theta2
 
 # fungsi untuk mengubah gambar upload
 # yang akan dijadikan data input
 # yang akan di resize dan di buat hitam putih
 def make_input_vector(file, img_size_w, img_size_h):
-    img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
-    new_array = cv2.resize(img_array, (img_size_w, img_size_h,)) 
-    vec = np.array(new_array).reshape(-1, img_size_w *img_size_h)
+    img_array = cv2.imdecode(
+        np.fromstring(file.read(), np.uint8),
+        cv2.IMREAD_GRAYSCALE
+    ) 
+    new_array = cv2.resize(
+        img_array,
+        (img_size_w, img_size_h)
+    ) 
+    vec = np.array(new_array).reshape(
+        -1,
+        img_size_w *img_size_h
+    )
+
     vec = vec / 255
+
     return vec
+
+# fungsi untuk mengambil data resolusi
+# input layer/ image pixel
+# dari form http request
+def get_image_size(request):
+    img_size_w = int(request.form["img_size_w"]) if "img_size_w" in request.form else IMG_SIZE_W
+    img_size_h = int(request.form["img_size_h"]) if "img_size_h" in request.form else IMG_SIZE_H
+    return img_size_w, img_size_h
+
+# fungsi untuk mengambil data resolusi
+# input layer/ image pixel
+# dari body http request
+def get_image_size_from_body(content_body):
+    img_size_w = int(content_body["img_size_w"]) if "img_size_w" in content_body else IMG_SIZE_W
+    img_size_h = int(content_body["img_size_h"]) if "img_size_h" in content_body else IMG_SIZE_H
+    return img_size_w, img_size_h
+
+# fungsi untuk mengambil pengaturan
+# untuk training model
+# dari body http request
+def get_setting_from_body(content_body):
+    hidden_layer = int(content_body["hidden_layer"])  if "hidden_layer" in content_body else 100
+    max_training_example = int(content_body["max_training_example"])  if "max_training_example" in content_body else MAX_TRAINING_EXAMPLE
+    max_training_test = int(content_body["max_training_test"]) if "max_training_test" in content_body else MAX_TRAINING_TEST
+    return hidden_layer, max_training_example ,max_training_test
