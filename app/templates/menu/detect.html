@@ -54,10 +54,10 @@
                         <div class = "col s12 m12 l4">
                           <h5>Deteksi : Mata Ikan</h5>
                           <div class="center">
-                              <img v-show="images['eye']" v-bind:src="images['eye']" width="200" height="200" />
+                              <img v-bind:src="images['eye']" width="200" height="200" />
                           </div>
                           <div class = "file-field input-field">
-                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
+                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Pilih</span>
                                 <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'eye')" />
                               </div>
                               <div class = "file-path-wrapper">
@@ -65,16 +65,16 @@
                               </div>
                           </div>
                           <p><span v-if="!training_result.eye.training_model_exist">Model Belum Dilatih!</span><br /></p>
-                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('eye')" :disabled="is_loading || !images['eye'] || !training_result.eye.training_model_exist"> <b><span>Proses</span></b></button>
-                          <br /><br /><br />
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('eye')" :disabled="!images['eye'] || is_loading" v-show="training_result.eye.training_model_exist"> <b><span>Proses</span></b></button>
+                          <br />
                         </div>
                         <div class = "col s12 m12 l4">
                           <h5>Deteksi : Insang Ikan</h5>
                           <div class="center">
-                              <img v-show="images['gill']" v-bind:src="images['gill']" width="200" height="200" />
+                              <img v-bind:src="images['gill']" width="200" height="200" />
                           </div>
                           <div class = "file-field input-field">
-                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
+                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Pilih</span>
                                 <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'gill')" />
                               </div>
                               <div class = "file-path-wrapper">
@@ -82,16 +82,16 @@
                               </div>
                           </div>
                           <p><span v-if="!training_result.gill.training_model_exist">Model Belum Dilatih!</span><br /></p>
-                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('gill')" :disabled="is_loading || !images['gill'] || !training_result.gill.training_model_exist"> <b><span>Proses</span></b></button>
-                          <br /><br /><br />
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('gill')" :disabled="!images['gill'] || is_loading " v-show="training_result.gill.training_model_exist"> <b><span>Proses</span></b></button>
+                          <br />
                         </div>
                         <div class = "col s12 m12 l4">
                           <h5>Deteksi : Kulit Ikan</h5>
                           <div class="center">
-                              <img v-show="images['skin']" v-bind:src="images['skin']" width="200" height="200" />
+                              <img v-bind:src="images['skin']" width="200" height="200" />
                           </div>
                           <div class = "file-field input-field">
-                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Upload</span>
+                              <div class = "waves-effect waves-light btn-large btn blue darken-1 white-text"><span>Pilih</span>
                                 <input type="file" accept="image/png, image/gif, image/jpeg"  @change="onFileChange($event,'skin')" />
                               </div>
                               <div class = "file-path-wrapper">
@@ -99,8 +99,8 @@
                               </div>
                           </div>
                           <p><span v-if="!training_result.skin.training_model_exist">Model Belum Dilatih!</span><br /></p>
-                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('skin')" :disabled="is_loading || !images['skin'] || !training_result.skin.training_model_exist"> <b><span>Proses</span></b></button>
-                          <br /><br /><br />
+                          <button class="waves-effect waves-light btn-large btn blue darken-1 white-text" style="width: 100%;" @click="uploadImage('skin')" :disabled="!images['skin'] || is_loading" v-show="training_result.skin.training_model_exist"> <b><span>Proses</span></b></button>
+                          <br />
                         </div>
                     </div>
                   </div>

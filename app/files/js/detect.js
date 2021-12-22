@@ -76,6 +76,7 @@ new Vue({
     },
     methods : {
         uploadImage(param){
+            this.is_loading = true
             let formData = new FormData();
             formData.append('file', this.files[param])
             formData.append('img_size_w', this.img_size_w)
@@ -85,12 +86,13 @@ new Vue({
                 'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
+                this.is_loading = false
                 if (response.data.error != null){
                     return
                 }
                 this.detect_result[response.data.target_param] = response.data
                 this.show_table = true
-                this.result = this.getMostFreq([this.detect_result.eye.prediction,this.detect_result.gill.prediction,this.detect_result.skin.prediction])
+                this.result = this.getMostFreq(this.getStore())
                 $('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
             })
             .catch(errors => {
@@ -134,18 +136,22 @@ new Vue({
             this.checkTrainingModel('gill')
             this.checkTrainingModel('skin')
         },
+        getStore(){
+            return [
+                [this.detect_result.eye.prediction, 50.0],
+                [this.detect_result.gill.prediction, 30.0],
+                [this.detect_result.skin.prediction, 20.0],
+            ]
+        },
         getMostFreq(store){
-            let frequency = {}
-            let max = 0
-            let result
-            for(var v in store) {
-                    frequency[store[v]]=(frequency[store[v]] || 0)+1
-                    if(frequency[store[v]] > max) {
-                            max = frequency[store[v]]
-                            result = store[v]
-                    }
-            }    
-            return result       
+            let result = ["", 0.0]
+            for(let i = 0; i < store.length; i++) {
+                if (store[i][0] != "" && store[i][1] > result[1]) {
+                    result = [store[i][0],store[i][1]]
+                    break
+                }
+            }
+            return result[0]  
         },
         loadSetting(){
             if (window.localStorage && window.localStorage.getItem('training_setting')) {
