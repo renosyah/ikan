@@ -8,7 +8,8 @@ new Vue({
                 gill : null,
                 skin : null
             },
-            img_size : 28,
+            img_size_w : 28,
+            img_size_h : 28,
             images : {
                 eye : null,
                 gill : null,
@@ -42,6 +43,7 @@ new Vue({
                     training_model_exist : false
                 }
             },
+            result : "",
             is_online : true,
             is_loading : false,
             host : {
@@ -74,8 +76,9 @@ new Vue({
     methods : {
         uploadImage(param){
             let formData = new FormData();
-            formData.append('file', this.files[param]);
-            formData.append('img_size', this.img_size)
+            formData.append('file', this.files[param])
+            formData.append('img_size_w', this.img_size_w)
+            formData.append('img_size_h', this.img_size_h)
             axios.post(this.baseUrl() + 'detect/process/' + param, formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data'
@@ -86,6 +89,7 @@ new Vue({
                 }
                 this.detect_result[response.data.target_param] = response.data
                 this.show_table = true
+                this.result = this.getMostFreq([this.detect_result.eye.prediction,this.detect_result.gill.prediction,this.detect_result.skin.prediction])
                 $('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
             })
             .catch(errors => {
@@ -128,6 +132,19 @@ new Vue({
             this.checkTrainingModel('eye')
             this.checkTrainingModel('gill')
             this.checkTrainingModel('skin')
+        },
+        getMostFreq(store){
+            let frequency = {}
+            let max = 0
+            let result
+            for(var v in store) {
+                    frequency[store[v]]=(frequency[store[v]] || 0)+1
+                    if(frequency[store[v]] > max) {
+                            max = frequency[store[v]]
+                            result = store[v]
+                    }
+            }    
+            return result       
         },
         switchPage(name){
             if ('URLSearchParams' in window) {

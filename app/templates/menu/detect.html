@@ -35,6 +35,21 @@
             <div class="row">
                <div class="col s12">
                   <div class="card-panel">
+                    <h5>Pengaturan</h5>
+                    <div class="row">
+                      <div class="input-field col s6">
+                        <input id="input_layer" type="number" class="validate" v-model="img_size_w">
+                        <label for="input_layer">Jumlah Input Layer (W)</label>
+                      </div>
+                      <div class="input-field col s6">
+                        <input id="input_layer" type="number" class="validate" v-model="img_size_h">
+                        <label for="input_layer">Jumlah Input Layer (H)</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+               <div class="col s12">
+                  <div class="card-panel">
                      <div class="row">
                         <div class = "col s12 m12 l4">
                           <h5>Deteksi : Mata Ikan</h5>
@@ -122,9 +137,10 @@
                         </tbody>
                      </table>
                      <br /><br />
-                     <div class="center">
-                        <h6><b> -Hasil- </b></h6>
+                     <div class="center" v-if="result != ''">
+                        <h6><b> Ikan dalam keadaan : {{ result }} </b></h6>
                      </div>
+                     <br /><br />
                   </div>
                </div>
             </div>

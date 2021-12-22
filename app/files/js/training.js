@@ -4,7 +4,8 @@ new Vue({
         return {
             show_table : false,
             query : {
-                input_layer : 784,
+                img_size_w : 28,
+                img_size_h : 28,
                 hidden_layer : 100,
                 max_training_example : 400,
                 max_training_test : 300

@@ -42,19 +42,23 @@
           <div class="card-panel">
             <h5>Pengaturan</h5>
             <div class="row">
-              <div class="input-field col s12 m12 l3">
-                <input id="input_layer" type="number" class="validate" value="784" v-model="query.input_layer">
-                <label for="input_layer">Jumlah Input Layer</label>
+              <div class="input-field col s12 m12 l4">
+                <input id="img_size_w" type="number" class="validate" v-model="query.img_size_w">
+                <label for="img_size_w">Jumlah Input Layer (W)</label>
               </div>
-              <div class="input-field col s12 m12 l3">
+              <div class="input-field col s12 m12 l4">
+                <input id="img_size_h" type="number" class="validate" v-model="query.img_size_h">
+                <label for="img_size_h">Jumlah Input Layer (H)</label>
+              </div>
+              <div class="input-field col s12 m12 l4">
                 <input id="hidden_layer" type="number" class="validate" value="100" v-model="query.hidden_layer">
                 <label for="hidden_layer">Jumlah Hidden Layer</label>
               </div>
-              <div class="input-field col s12 m12 l3">
+              <div class="input-field col s12 m12 l4">
                 <input id="max_training_example" type="number" class="validate" value="400" v-model="query.max_training_example">
                 <label for="max_training_example">Maximum Training Example</label>
               </div>
-              <div class="input-field col s12 m12 l3">
+              <div class="input-field col s12 m12 l4">
                 <input id="max_training_test" type="number" class="validate" value="300" v-model="query.max_training_test">
                 <label for="max_training_test">Maximum Training Test</label>
               </div>

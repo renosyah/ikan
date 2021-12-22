@@ -12,9 +12,10 @@ from .Prediction import predict
 from scipy.optimize import minimize
 
 # default setting
-LABEL_NAMES = ["Segar","Agak Segar","Busuk"]
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
-IMG_SIZE = 28
+LABEL_NAMES = ["Segar","Kurang Segar","Busuk"]
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+IMG_SIZE_W = 28
+IMG_SIZE_H = 28
 DATADIR = os.path.join("app","dataset")
 CLASSES = ["0","1","2"]
 MAX_TRAINING_EXAMPLE = 400
@@ -65,22 +66,23 @@ def training_model(target_param):
 def training_perform(target_param):
 
     content_body = request.json
-    input_layer = int(content_body["input_layer"]) if "input_layer" in content_body else (IMG_SIZE * IMG_SIZE)
+    img_size_w = int(content_body["img_size_w"]) if "img_size_w" in content_body else IMG_SIZE_W
+    img_size_h = int(content_body["img_size_h"]) if "img_size_h" in content_body else IMG_SIZE_H
     hidden_layer = int(content_body["hidden_layer"])  if "hidden_layer" in content_body else 100
     max_training_example = int(content_body["max_training_example"])  if "max_training_example" in content_body else MAX_TRAINING_EXAMPLE
     max_training_test = int(content_body["max_training_test"]) if "max_training_test" in content_body else MAX_TRAINING_TEST
 
-    training_data = create_training_data(CLASSES, DATADIR, IMG_SIZE, target_param)
+    training_data = create_training_data(CLASSES, DATADIR, img_size_w, img_size_h, target_param)
 
-    X,y = make_X_and_y(training_data, input_layer)
+    X,y = make_X_and_y(training_data, img_size_w, img_size_h)
 
     X_train,y_train = make_training_X_and_y(X,y,max_training_example)
 
     X_test,y_test = make_test_X_and_y(X,y,max_training_test)
 
-    initial_Theta1,initial_Theta2 = initialize_theta(input_layer,hidden_layer)
+    initial_Theta1,initial_Theta2 = initialize_theta(img_size_w * img_size_h,hidden_layer)
 
-    Theta1,Theta2 = make_training_theta(initial_Theta1,initial_Theta2,input_layer, hidden_layer, X_train, y_train)
+    Theta1,Theta2 = make_training_theta(initial_Theta1,initial_Theta2, img_size_w * img_size_h, hidden_layer, X_train, y_train)
 
     test, training = test_and_training(Theta1, Theta2, X_test, X_train)
 
@@ -109,7 +111,9 @@ def detect():
 @menu.route('/detect/process/<path:target_param>', methods=['GET', 'POST'])
 def detect_process(target_param):
     if request.method == 'POST':
-        img_size = int(request.form["img_size"]) if "img_size" in request.form else IMG_SIZE
+        img_size_w = int(request.form["img_size_w"]) if "img_size_w" in request.form else IMG_SIZE_W
+        img_size_h = int(request.form["img_size_h"]) if "img_size_h" in request.form else IMG_SIZE_H
+
         file = request.files['file']
 
         if 'file' not in request.files:
@@ -118,7 +122,7 @@ def detect_process(target_param):
         if not allowed_file(file.filename):
             return jsonify({}), 500
 
-        vec = make_input_vector(file, img_size)
+        vec = make_input_vector(file, img_size_w, img_size_h)
 
         Theta1,Theta2 = load_training_model(target_param)
 
@@ -135,14 +139,14 @@ def detect_process(target_param):
 # fungsi untuk melist dataset gambar2
 # yang akan dijadikan data training
 # yang akan di resize dan di buat hitam putih
-def create_training_data(classes, data_dir, img_size, param):
+def create_training_data(classes, data_dir, img_size_w, img_size_h, param):
     result = []
     for clas in classes:
         path = os.path.join(data_dir,param,clas) 
         for img in os.listdir(path):
             try:
                 img_array = cv2.imread(os.path.join(path,img) ,cv2.IMREAD_GRAYSCALE)
-                new_array = cv2.resize(img_array, (img_size, img_size))
+                new_array = cv2.resize(img_array, (img_size_w, img_size_h))
                 result.append([new_array, classes.index(clas)])
 
             except OSError as e:
@@ -165,13 +169,13 @@ def allowed_file(filename):
 # yang di ekstrak dari dataset
 # yang setiap data akan di ubah ke numpy array
 # dan di normalisasikan
-def make_X_and_y(training_data, input_layer_size):
+def make_X_and_y(training_data, input_layer_size_w, input_layer_size_h):
     X,y = [], []
     for features,label in training_data:
         X.append(features)
         y.append(label)
         
-    X = np.array(X).reshape(-1, input_layer_size)
+    X = np.array(X).reshape(-1, input_layer_size_h * input_layer_size_w)
     X = X / 255
 
     return X,y
@@ -244,9 +248,9 @@ def load_training_model(target_param):
     Theta2 = np.loadtxt(os.path.join('app','training',target_param,'Theta2.csv'), delimiter=",")
     return Theta1, Theta2
 
-def make_input_vector(file, img_size):
+def make_input_vector(file, img_size_w, img_size_h):
     img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
-    new_array = cv2.resize(img_array, (img_size, img_size)) 
-    vec = np.array(new_array).reshape(-1, img_size * img_size)
+    new_array = cv2.resize(img_array, (img_size_w, img_size_h,)) 
+    vec = np.array(new_array).reshape(-1, img_size_w *img_size_h)
     vec = vec / 255
     return vec
