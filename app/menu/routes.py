@@ -248,6 +248,9 @@ def load_training_model(target_param):
     Theta2 = np.loadtxt(os.path.join('app','training',target_param,'Theta2.csv'), delimiter=",")
     return Theta1, Theta2
 
+# fungsi untuk mengubah gambar upload
+# yang akan dijadikan data input
+# yang akan di resize dan di buat hitam putih
 def make_input_vector(file, img_size_w, img_size_h):
     img_array = cv2.imdecode(np.fromstring(file.read(), np.uint8),cv2.IMREAD_GRAYSCALE) 
     new_array = cv2.resize(img_array, (img_size_w, img_size_h,)) 

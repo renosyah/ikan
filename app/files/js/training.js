@@ -48,6 +48,7 @@ new Vue({
         //window.history.pushState({ noBackExitsApp: true }, '')
         //window.addEventListener('popstate', this.backPress)
         this.setCurrentHost()
+        this.loadSetting()
     },
     mounted () {
         window.$('.dropdown-trigger').dropdown()
@@ -79,6 +80,7 @@ new Vue({
                     this.training_result[response.data.target_param] = response.data
                     this.show_table = true
                     this.checkTrainingModelStatus()
+                    this.saveSetting()
                     $('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
 
                 })
@@ -109,6 +111,16 @@ new Vue({
             this.checkTrainingModel('eye')
             this.checkTrainingModel('gill')
             this.checkTrainingModel('skin')
+        },
+        saveSetting(){
+            if (window.localStorage) {
+                window.localStorage.setItem('training_setting', JSON.stringify(this.query))
+            }
+        },
+        loadSetting(){
+            if (window.localStorage && window.localStorage.getItem('training_setting')) {
+                this.query = JSON.parse(window.localStorage.getItem('training_setting'))
+            }
         },
         switchPage(name){
             if ('URLSearchParams' in window) {

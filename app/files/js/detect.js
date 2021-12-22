@@ -59,6 +59,7 @@ new Vue({
         //window.history.pushState({ noBackExitsApp: true }, '')
         //window.addEventListener('popstate', this.backPress)
         this.setCurrentHost()
+        this.loadSetting()
     },
     mounted () {
         window.$('.dropdown-trigger').dropdown()
@@ -145,6 +146,13 @@ new Vue({
                     }
             }    
             return result       
+        },
+        loadSetting(){
+            if (window.localStorage && window.localStorage.getItem('training_setting')) {
+                let setting = JSON.parse(window.localStorage.getItem('training_setting'))
+                this.img_size_w = setting.img_size_w
+                this.img_size_h = setting.img_size_h
+            }
         },
         switchPage(name){
             if ('URLSearchParams' in window) {
