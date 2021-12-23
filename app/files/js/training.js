@@ -8,10 +8,12 @@ new Vue({
                 img_size_h : 28,
                 hidden_layer : 100,
                 max_training_example : 400,
-                max_training_test : 300
+                max_training_test : 300,
+                maxiter : 100
             },
             training_result : {
                 eye : {
+                    total_dataset: "",
                     precision: "", 
                     target_param: "", 
                     test_accuration: "", 
@@ -19,6 +21,7 @@ new Vue({
                     training_model_exist : false
                 },
                 gill : {
+                    total_dataset: "",
                     precision: "", 
                     target_param: "", 
                     test_accuration: "", 
@@ -26,6 +29,7 @@ new Vue({
                     training_model_exist : false
                 },
                 skin : {
+                    total_dataset: "",
                     precision: "", 
                     target_param: "", 
                     test_accuration: "", 
@@ -77,7 +81,13 @@ new Vue({
                         return
                     }
 
-                    this.training_result[response.data.target_param] = response.data
+                    this.training_result[response.data.target_param].total_dataset = response.data.total_dataset
+                    this.training_result[response.data.target_param].precision = response.data.precision
+                    this.training_result[response.data.target_param].target_param = response.data.target_param 
+                    this.training_result[response.data.target_param].test_accuration = response.data.test_accuration
+                    this.training_result[response.data.target_param].training_accuration = response.data.training_accuration
+                    this.training_result[response.data.target_param].training_model_exist = true
+
                     this.show_table = true
                     this.checkTrainingModelStatus()
                     this.saveSetting()

@@ -76,6 +76,10 @@ new Vue({
     },
     methods : {
         uploadImage(param){
+            if (!this.training_result[param].training_model_exist){
+                return
+            }
+
             this.is_loading = true
             let formData = new FormData();
             formData.append('file', this.files[param])
@@ -92,7 +96,7 @@ new Vue({
                 }
                 this.detect_result[response.data.target_param] = response.data
                 this.show_table = true
-                this.result = this.getMostFreq(this.getStore())
+                this.result = this.getMostFreq()
                 $('html,body').animate({scrollTop: document.body.scrollHeight},"slow");
             })
             .catch(errors => {
@@ -137,22 +141,33 @@ new Vue({
             this.checkTrainingModel('gill')
             this.checkTrainingModel('skin')
         },
-        getStore(){
-            return [
+        getMostFreq(){
+            let store = [
                 [this.detect_result.eye.prediction, 50.0],
                 [this.detect_result.gill.prediction, 30.0],
-                [this.detect_result.skin.prediction, 20.0],
+                [this.detect_result.skin.prediction, 20.0]
             ]
-        },
-        getMostFreq(store){
-            let result = ["", 0.0]
-            for(let i = 0; i < store.length; i++) {
-                if (store[i][0] != "" && store[i][1] > result[1]) {
-                    result = [store[i][0],store[i][1]]
-                    break
-                }
+
+            // default prioritaskan yg 20.0
+            let result = store[2][0]
+
+            // prioritaskan yg 30.0
+            if (store[1][0] != ""){
+                result = store[1][0]
             }
-            return result[0]  
+
+            // prioritaskan yg 50.0
+            if (store[0][0] != ""){
+                result = store[0][0]
+            }
+
+            // prioritaskan yg 20.0 + 30.0 apabila
+            // nilainya sama
+            if (store[1][0] != "" && store[1][0] == store[2][0]){
+                result = store[1][0]
+            }
+
+            return result
         },
         loadSetting(){
             if (window.localStorage && window.localStorage.getItem('training_setting')) {

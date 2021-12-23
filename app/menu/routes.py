@@ -20,6 +20,7 @@ DATADIR = os.path.join("app","dataset")
 CLASSES = ["0","1","2"]
 MAX_TRAINING_EXAMPLE = 400
 MAX_TRAINING_TEST = 300
+MAX_ITTERATION = 100
 Y_LABEL_SIZE = 3
 
 # header response
@@ -80,7 +81,7 @@ def training_perform(target_param):
         content_body
     )
 
-    hidden_layer, max_training_example, max_training_test = get_setting_from_body(
+    hidden_layer, max_training_example, max_training_test, maxiter = get_setting_from_body(
         content_body
     )
 
@@ -120,6 +121,7 @@ def training_perform(target_param):
         initial_Theta2,
         img_size_w * img_size_h,
         hidden_layer,
+        maxiter,
         X_train,
         y_train
     )
@@ -143,6 +145,7 @@ def training_perform(target_param):
     )
 
     return jsonify({
+        'total_dataset' : len(training_data),
         'precision': precision,
         'target_param' : target_param,
         'test_accuration' : str(
@@ -297,10 +300,8 @@ def initialize_theta(input_layer,hidden_layer):
 # akan digunakan sebagai model training
 # menggunakan library dan skrip konfigurasi
 # yang sering dipakai untuk neural network
-def make_training_theta(initial_Theta1,initial_Theta2,input_layer_size, hidden_layer_size, X_train, y_train):
-    maxiter = 100
+def make_training_theta(initial_Theta1,initial_Theta2,input_layer_size, hidden_layer_size, maxiter, X_train, y_train):
     lambda_reg = 0.1
-
     myargs = (
         input_layer_size,
         hidden_layer_size,
@@ -448,4 +449,5 @@ def get_setting_from_body(content_body):
     hidden_layer = int(content_body["hidden_layer"])  if "hidden_layer" in content_body else 100
     max_training_example = int(content_body["max_training_example"])  if "max_training_example" in content_body else MAX_TRAINING_EXAMPLE
     max_training_test = int(content_body["max_training_test"]) if "max_training_test" in content_body else MAX_TRAINING_TEST
-    return hidden_layer, max_training_example ,max_training_test
+    maxiter =  int(content_body["maxiter"]) if "maxiter" in content_body else MAX_ITTERATION
+    return hidden_layer, max_training_example ,max_training_test ,maxiter

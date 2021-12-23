@@ -37,8 +37,8 @@
     display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #ffffff;
-    opacity:0.4;
+	background-color: #c4c4c4;
+    opacity:0.8;
 	position: fixed;
 	z-index: 100;
 	top: 0;

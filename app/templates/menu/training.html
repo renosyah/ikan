@@ -86,6 +86,10 @@
                 <input id="max_training_test" type="number" class="validate" value="300" v-model="query.max_training_test">
                 <label for="max_training_test">Maximum Training Test</label>
               </div>
+              <div class="input-field col s12 m12 l4">
+                <input id="max_maxiter" type="number" class="validate" value="100" v-model="query.maxiter">
+                <label for="max_maxiter">Maximum Iterasi</label>
+              </div>
             </div>
           </div>
         </div>
@@ -126,6 +130,7 @@
                 <thead>
                   <tr>
                       <th>Parameter</th>
+                      <th>Jumlah Data</th>
                       <th>Test Akurasi</th>
                       <th>Training Akurasi</th>
                       <th>Presisi</th>
@@ -135,18 +140,21 @@
                 <tbody>
                   <tr>
                     <td>Mata</td>
+                    <td>{{ training_result.eye.total_dataset != "" ? training_result.eye.total_dataset  : "-"}}</td>
                     <td>{{ training_result.eye.test_accuration != "" ? training_result.eye.test_accuration + "%" : "-"}} </td>
                     <td>{{ training_result.eye.training_accuration != "" ? training_result.eye.training_accuration + "%"  : "-"}}</td>
                     <td>{{ training_result.eye.precision != "" ? training_result.eye.precision : "-"}}</td>
                   </tr>
                   <tr>
                     <td>Insang</td>
+                    <td>{{ training_result.gill.total_dataset != "" ? training_result.gill.total_dataset  : "-"}}</td>
                     <td>{{ training_result.gill.test_accuration != "" ? training_result.gill.test_accuration + "%"  : "-"}}</td>
                     <td>{{ training_result.gill.training_accuration != "" ? training_result.gill.training_accuration + "%"  : "-"}}</td>
                     <td>{{ training_result.eye.precision != "" ? training_result.gill.precision : "-"}}</td>
                   </tr>
                   <tr>
                     <td>Kulit</td>
+                    <td>{{ training_result.skin.total_dataset != "" ? training_result.skin.total_dataset  : "-"}}</td>
                     <td>{{ training_result.skin.test_accuration != "" ? training_result.skin.test_accuration + "%"  : "-"}}</td>
                     <td>{{ training_result.skin.training_accuration != "" ? training_result.skin.training_accuration + "%"  : "-"}}</td>
                     <td>{{ training_result.eye.precision != "" ? training_result.skin.precision  : "-"}}</td>
