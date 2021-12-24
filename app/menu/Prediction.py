@@ -6,13 +6,26 @@ import numpy as np
 # ini adalah fungsi standar
 def predict(Theta1, Theta2, X):
     m = X.shape[0]
+    
+    # Aktivasi untuk layer pertama
     one_matrix = np.ones((m, 1))
-    X = np.append(one_matrix, X, axis=1)  # Adding bias unit to first layer
+    
+    # Menambahkan unit bias ke layer pertama
+    X = np.append(one_matrix, X, axis=1) 
     z2 = np.dot(X, Theta1.transpose())
-    a2 = 1 / (1 + np.exp(-z2))  # Activation for second layer
+    
+    # Aktivasi untuk layer kedua
+    a2 = 1 / (1 + np.exp(-z2))  
     one_matrix = np.ones((m, 1))
-    a2 = np.append(one_matrix, a2, axis=1)  # Adding bias unit to hidden layer
+    
+    # Menambahkan unit bias ke hidden layer
+    a2 = np.append(one_matrix, a2, axis=1)  
     z3 = np.dot(a2, Theta2.transpose())
-    a3 = 1 / (1 + np.exp(-z3))  # Activation for third layer
-    p = (np.argmax(a3, axis=1))  # Predicting the class on the basis of max value of hypothesis
+    
+    # Aktivasi untuk layer ketiga
+    a3 = 1 / (1 + np.exp(-z3))  
+    
+     # Memprediksi kelas berdasarkan nilai maksimal hipotesis
+    p = (np.argmax(a3, axis=1))
+    
     return p, a3[0]

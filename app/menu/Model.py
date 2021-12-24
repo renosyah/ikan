@@ -5,10 +5,10 @@ import numpy as np
 # untuk neural network
 def neural_network(nn_params, input_layer_size, hidden_layer_size, num_labels, X, y, lamb):
     
-    # For each label between 0, 1 and 2, there will be a vector of length 3
+    # Untuk setiap label antara 0, 1 dan 2, akan ada vektor dengan panjang 3
     y_label_size = 3
 
-    # Weights are split back to Theta1, Theta2
+    # Distribusi Berat dibagi menjad ke Theta1, Theta2
     Theta1 = np.reshape(nn_params[:hidden_layer_size * (input_layer_size + 1)],
                         (hidden_layer_size, input_layer_size + 1))
     Theta2 = np.reshape(nn_params[hidden_layer_size * (input_layer_size + 1):],
@@ -17,25 +17,33 @@ def neural_network(nn_params, input_layer_size, hidden_layer_size, num_labels, X
     # Forward propagation
     m = X.shape[0]
     one_matrix = np.ones((m, 1))
-    X = np.append(one_matrix, X, axis=1)  # Adding bias unit to first layer
+    
+    # Menambahkan unit bias ke layer pertama
+    X = np.append(one_matrix, X, axis=1)
     a1 = X
     z2 = np.dot(X, Theta1.transpose())
-    a2 = 1 / (1 + np.exp(-z2))  # Activation for second layer
+    
+    # Aktivasi untuk layer kedua
+    a2 = 1 / (1 + np.exp(-z2))  
     one_matrix = np.ones((m, 1))
-    a2 = np.append(one_matrix, a2, axis=1)  # Adding bias unit to hidden layer
+    
+    # Menambahkan unit bias ke hidden layer
+    a2 = np.append(one_matrix, a2, axis=1)  
     z3 = np.dot(a2, Theta2.transpose())
-    a3 = 1 / (1 + np.exp(-z3))  # Activation for third layer
+    
+    # Aktivasi untuk layer ketiga
+    a3 = 1 / (1 + np.exp(-z3))  
  
-    # Changing the y labels into vectors of boolean values.
+    # Mengubah label y menjadi vektor nilai boolean
     y_vect = np.zeros((m, y_label_size))
     for i in range(m):
         y_vect[i, int(y[i])] = 1
  
-    # Calculating cost function
+    # Menghitung fungsi cost
     J = (1 / m) * (np.sum(np.sum(-y_vect * np.log(a3) - (1 - y_vect) * np.log(1 - a3)))) + (lamb / (2 * m)) * (
                 sum(sum(pow(Theta1[:, 1:], 2))) + sum(sum(pow(Theta2[:, 1:], 2))))
  
-    # backprop
+    # back propagation
     Delta3 = a3 - y_vect
     Delta2 = np.dot(Delta3, Theta2) * a2 * (1 - a2)
     Delta2 = Delta2[:, 1:]
