@@ -25,7 +25,7 @@ def predict(Theta1, Theta2, X):
     # Aktivasi untuk layer ketiga
     a3 = 1 / (1 + np.exp(-z3))  
     
-     # Memprediksi kelas berdasarkan nilai maksimal hipotesis
+    # Memprediksi kelas berdasarkan nilai maksimal hipotesis
     p = (np.argmax(a3, axis=1))
     
     return p, a3[0]
