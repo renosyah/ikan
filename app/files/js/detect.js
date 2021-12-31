@@ -164,7 +164,7 @@ new Vue({
             // prioritaskan yg 20.0 + 30.0 apabila
             // nilainya sama
             if (store[1][0] != "" && store[1][0] == store[2][0]){
-                result = store[1][0]
+                result = "Error"
             }
 
             return result
