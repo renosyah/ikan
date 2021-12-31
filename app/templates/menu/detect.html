@@ -49,13 +49,13 @@
                <div class="col s12">
                   <div class="card">
                      <div class="card-image">
-                        <img src="./img/bg.jpg">
+                        <img src="./img/banner_2.jpg">
                         <span class="card-title"><h4>Deteksi Kesegaran Ikan</h4></span>
                      </div>
                   </div>
                </div>
             </div>
-            <h4 class="center white-text hide-on-large-only">Deteksi Kesegaran Ikan</h4>
+            <h4 class="center hide-on-large-only black-text">Deteksi Kesegaran Ikan</h4>
             <div class="row">
                <div class="col s12" v-show="false">
                   <div class="card-panel">
@@ -123,6 +123,7 @@
                         <thead>
                            <tr>
                               <th>Parameter</th>
+                              <th>Prioritas</th>
                               <th>Akurasi</th>
                               <th>Hasil</th>
                            </tr>
@@ -130,16 +131,19 @@
                         <tbody>
                            <tr>
                               <td>Mata</td>
+                              <th>{{ getStore()[2][1] }}</th>
                               <td>{{ detect_result.eye.accuration != "" ? detect_result.eye.accuration + "%" : "-"}}</td>
                               <td>{{ detect_result.eye.prediction != "" ? detect_result.eye.prediction : "-"}}</td>
                            </tr>
                            <tr>
                               <td>Insang</td>
+                              <th>{{ getStore()[1][1] }}</th>
                               <td>{{ detect_result.gill.accuration != "" ? detect_result.gill.accuration + "%" : "-"}}</td>
                               <td>{{ detect_result.gill.prediction != "" ? detect_result.gill.prediction : "-"}}</td>
                            </tr>
                            <tr>
                               <td>Kulit</td>
+                              <th>{{ getStore()[0][1] }}</th>
                               <td>{{ detect_result.skin.accuration != "" ? detect_result.skin.accuration + "%" : "-"}}</td>
                               <td>{{ detect_result.skin.prediction != "" ? detect_result.skin.prediction : "-"}}</td>
                            </tr>
@@ -159,13 +163,13 @@
                      <br>
                      <div class="center row">
                         <div class="col s12 m6 l6">
-                           <a href="/training" class="waves-effect waves-light btn-large blue" style="width: 100%;">Pelatihan</a>
+                           <a href="/training" class="waves-effect waves-light btn-large  blue lighten-4 black-text" style="width: 100%;">Pelatihan</a>
                         </div>
                         <div class="col s12 hide-on-med-and-up">
                            <p></p>
                         </div>
                         <div class="col s12 m6 l6">
-                           <a href="/" class="waves-effect waves-light btn-large blue" style="width: 100%;">Beranda</a>
+                           <a href="/" class="waves-effect waves-light btn-large blue lighten-4 black-text" style="width: 100%;">Beranda</a>
                         </div>
                      </div>
                   </div>

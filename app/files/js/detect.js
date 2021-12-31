@@ -141,32 +141,34 @@ new Vue({
             this.checkTrainingModel('gill')
             this.checkTrainingModel('skin')
         },
-        getMostFreq(){
-            let store = [
-                [this.detect_result.eye.prediction, 50.0],
-                [this.detect_result.gill.prediction, 30.0],
-                [this.detect_result.skin.prediction, 20.0]
+        getStore(){
+            return [
+                [this.detect_result.gill.prediction, 35.0],
+                [this.detect_result.skin.prediction, 35.0],
+                [this.detect_result.eye.prediction, 30.0]
             ]
+        },
+        getMostFreq(){
+            let store = this.getStore()
 
-            // default prioritaskan yg 20.0
             let result = store[2][0]
 
-            // prioritaskan yg 30.0
-            if (store[1][0] != ""){
-                result = store[1][0]
-            }
-
-            // prioritaskan yg 50.0
             if (store[0][0] != ""){
                 result = store[0][0]
             }
 
-            // prioritaskan yg 20.0 + 30.0 apabila
-            // nilainya sama
-            if (store[1][0] != "" && store[1][0] == store[2][0]){
-                result = "Error"
+            if (store[1][0] != ""){
+                result = store[1][0]
+            }
+            
+            if (store[0][0] != "" && store[0][0] == store[1][0]){
+                result = store[0][0]
             }
 
+            if (store[0][0] != "" && store[1][0] != "" && store[0][0] != store[1][0]){
+                result = "Error"
+            }
+            
             return result
         },
         loadSetting(){

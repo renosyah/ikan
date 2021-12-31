@@ -33,7 +33,7 @@
 
  .bg {
     position: fixed;
-    background-color: #102553;
+    background-image: url("/img/bg_3.jpg");
     background-clip: border-box;
     background-repeat: no-repeat;
     background-size: cover;
@@ -46,7 +46,7 @@
 
 .bg_img {
     position: fixed;
-    background-image: url("/img/bg.jpg");
+    background-image: url("/img/banner_2.jpg");
     background-clip: border-box;
     background-repeat: no-repeat;
     background-size: cover;
@@ -73,7 +73,7 @@
 
 
 img {
-    border: 5px solid #081229;
+    border: 5px solid #bbdefb;
 }
 
  .icon-block {
