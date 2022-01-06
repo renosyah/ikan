@@ -13,6 +13,7 @@ from scipy.optimize import minimize
 
 # default setting
 LABEL_NAMES = ["Segar","Kurang Segar","Busuk"]
+LABEL_SYMBOL = ["S","KS","B"]
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 IMG_SIZE_W = 28
 IMG_SIZE_H = 28
@@ -204,6 +205,7 @@ def detect_process(target_param):
     return jsonify({
         'target_param' : target_param,
         'prediction' : LABEL_NAMES[pred[0]],
+        'label' : LABEL_SYMBOL[pred[0]],
         'accuration' : "{:f}".format(acc[pred[0]] * 100)
     }), 200
 

@@ -1,0 +1,5 @@
+1) setiap parameter memiliki bobot (mata : 30 => hasil : ?, ingsang : 35 => hasil : ?, kulit : 35 => hasil : ?)
+2) ada 3 hasil keluaran : segar, kurang segar, dan busuk
+3) masing2 hasil keluaran akan di increment value dari parameter yang telah keluar hasilnya (semisal yang keluar 0,0,1 =30,35,35 >> yang di ambil hanya yang hasilnya sama yaitu 0 dan 0. jika 0 dan 0 di tambah maka 30+35=65 outputnya SEGAR )
+4) total value dari hasil keluaran yang paling tinggi akan digunakan (2 dari 3 param yg mengeluarkan hasil yang sama maka akan di jumlahkan)
+5) syarat : tampilkan hanya pada saat semua parameter sudah memiliki hasil!

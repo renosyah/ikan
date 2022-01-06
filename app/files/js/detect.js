@@ -19,17 +19,20 @@ new Vue({
                 eye : {
                     prediction: "", 
                     target_param: "", 
-                    accuration: ""
+                    accuration: "",
+                    label : ""
                 },
                 gill : {
                     prediction: "", 
                     target_param: "", 
-                    accuration: ""
+                    accuration: "",
+                    label : ""
                 },
                 skin : {
                     prediction: "", 
                     target_param: "", 
-                    accuration: ""
+                    accuration: "",
+                    label : ""
                 },
             },
             training_result : {
@@ -143,32 +146,47 @@ new Vue({
         },
         getStore(){
             return [
-                [this.detect_result.gill.prediction, 35.0],
-                [this.detect_result.skin.prediction, 35.0],
-                [this.detect_result.eye.prediction, 30.0]
+                [this.detect_result.gill.prediction, this.detect_result.gill.label, 35.0],
+                [this.detect_result.skin.prediction, this.detect_result.skin.label, 35.0],
+                [this.detect_result.eye.prediction, this.detect_result.eye.label, 30.0]
             ]
         },
         getMostFreq(){
             let store = this.getStore()
+            let result = ""
+            let pools = {"S" : 0.0, "KS" : 0.0, "B" : 0.0}
+            let is_ok = true
 
-            let result = store[2][0]
+            store.forEach((value, index) => {
+                if (value[1] != ""){
+                    pools[value[1]] += value[2]
+                }
+            });
 
-            if (store[0][0] != ""){
-                result = store[0][0]
+            console.log(pools)
+
+            for (let i=0;i<store.lengthl;i++){
+                if (store[i][1] == ""){
+                    is_ok = false
+                    break
+                }
             }
 
-            if (store[1][0] != ""){
-                result = store[1][0]
-            }
-            
-            if (store[0][0] != "" && store[0][0] == store[1][0]){
-                result = store[0][0]
+            if (!is_ok){
+                return "-"
             }
 
-            if (store[0][0] != "" && store[1][0] != "" && store[0][0] != store[1][0]){
+            if (pools["S"] > pools["KS"] && pools["S"] > pools["B"]){
+                result = "Segar"
+            } else if (pools["KS"] > pools["B"] && pools["KS"] > pools["S"]){
+                result = "Kurang Segar"
+            } else if (pools["B"] > pools["S"] && pools["B"] > pools["KS"]){
+                result = "Busuk"
+            } else {
                 result = "Error"
             }
-            
+
+
             return result
         },
         loadSetting(){
