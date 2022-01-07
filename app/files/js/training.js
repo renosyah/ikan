@@ -99,6 +99,24 @@ new Vue({
                     this.is_loading = false
                 })
         },
+        checkTrainingResult(param){
+            this.is_loading = true
+            axios({
+                method: 'post',
+                url:  this.baseUrl() + "training/result/" + param,
+                data: {}
+            }).then(response => {
+                    this.is_loading = false
+                    if (response.data.status == 404) {
+                        return
+                    }
+                    this.training_result[param] = response.data
+                })
+                .catch(e => {
+                    console.log(e)
+                    this.is_loading = false
+                })
+        },        
         checkTrainingModel(param){
             this.is_loading = true
             axios({
@@ -118,6 +136,10 @@ new Vue({
                 })
         },
         checkTrainingModelStatus(){
+            this.checkTrainingResult('eye')
+            this.checkTrainingResult('gill')
+            this.checkTrainingResult('skin')
+            
             this.checkTrainingModel('eye')
             this.checkTrainingModel('gill')
             this.checkTrainingModel('skin')

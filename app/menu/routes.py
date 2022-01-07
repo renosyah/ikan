@@ -1,6 +1,7 @@
 from flask import request, render_template, send_from_directory, redirect
 from . import menu
 import os
+import json
 from flask import jsonify
 import numpy as np
 import matplotlib.pyplot as plt
@@ -62,14 +63,22 @@ def training():
 # fungsi route untuk menangani
 # permintaan API mengecheck
 # data model training
-@menu.route('/training/<path:target_param>', methods=['GET','POST'])
+@menu.route('/training/<path:target_param>', methods=['POST','GET'])
 def training_model(target_param):
     return jsonify({
         'is_exist': os.path.exists(
             os.path.join('app','training',target_param,'Theta1.csv')
         ),
         'target_param' : target_param
-    }) 
+    }), 200
+    
+# training routes
+# fungsi route untuk menangani
+# permintaan API mengecheck
+# hasil training    
+@menu.route('/training/result/<path:target_param>', methods=['POST','GET'])
+def training_result(target_param):
+    return jsonify(load_training_result(target_param)), 200
 
 # training routes
 # fungsi route untuk menangani
@@ -144,8 +153,8 @@ def training_perform(target_param):
         Theta1,
         Theta2
     )
-
-    return jsonify({
+    
+    json_data = {
         'total_dataset' : len(training_data),
         'precision': precision,
         'target_param' : target_param,
@@ -154,8 +163,13 @@ def training_perform(target_param):
         ),
         'training_accuration' : str(
             format((np.mean(training == y_train) * 100))
-        )
-    }), 200
+        ),
+        'training_model_exist' : True,
+    }
+    
+    saving_training_result(target_param, json_data)
+
+    return jsonify(json_data), 200
 
 # detect routes
 # fungsi route untuk menangani
@@ -208,8 +222,6 @@ def detect_process(target_param):
         'label' : LABEL_SYMBOL[pred[0]],
         'accuration' : "{:f}".format(acc[pred[0]] * 100)
     }), 200
-
-    return jsonify({}), 200
 
 # fungsi untuk melist dataset gambar2
 # yang akan dijadikan data training
@@ -406,6 +418,21 @@ def load_training_model(target_param):
         delimiter=","
     )
     return Theta1, Theta2
+
+
+# fungsi untuk menyimpan hasil training
+def saving_training_result(target_param, json_data):
+    with open(os.path.join('app','training',target_param,'Result.json'), 'w') as outfile:
+        json.dump( json_data, outfile)
+
+
+# fungsi untuk mengambil hasil training
+def load_training_result(target_param):
+    json_data = {}
+    with open(os.path.join('app','training',target_param,'Result.json')) as json_file:
+        json_data = json.load(json_file)
+    return json_data
+
 
 # fungsi untuk mengubah gambar upload
 # yang akan dijadikan data input
