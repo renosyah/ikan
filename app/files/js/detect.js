@@ -62,7 +62,7 @@ new Vue({
         //window.history.pushState({ noBackExitsApp: true }, '')
         //window.addEventListener('popstate', this.backPress)
         this.setCurrentHost()
-        this.loadSetting()
+        //this.loadSetting()
     },
     mounted () {
         window.$('.dropdown-trigger').dropdown()

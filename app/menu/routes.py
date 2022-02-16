@@ -103,19 +103,21 @@ def training_perform(target_param):
         target_param
     )
 
-    X,y = make_X_and_y(
+    file_datas, X, y = make_X_and_y(
         training_data,
         img_size_w,
         img_size_h
     )
 
-    X_train,y_train = make_training_X_and_y(
+    file_data_train, X_train, y_train = make_training_X_and_y(
+        file_datas,
         X,
         y,
         max_training_example
     )
 
-    X_test,y_test = make_test_X_and_y(
+    file_data_test, X_test, y_test = make_test_X_and_y(
+        file_datas,
         X,
         y,
         max_training_test
@@ -142,6 +144,28 @@ def training_perform(target_param):
         X_test,
         X_train
     )
+    
+    result_data_training = []
+    for i in range(len(file_data_train)):
+        result_data_training.append(
+            { 
+                "filename" : file_data_train[i]["filename"],
+                "label" : file_data_train[i]["label"],
+                #"data" : file_data_train[i],
+                "predict_label" : int(training[i])
+             }
+        )
+    
+    result_data_test = []
+    for i in range(len(file_data_test)):
+        result_data_test.append(
+            { 
+                "filename" : file_data_test[i]["filename"],
+                "label" : file_data_test[i]["label"],
+                #"data" : file_data_test[i],
+                "predict_label" : int(test[i])
+            }
+        )
 
     precision = get_precision(
         training,
@@ -158,6 +182,8 @@ def training_perform(target_param):
         'total_dataset' : len(training_data),
         'precision': precision,
         'target_param' : target_param,
+        'result_test' : result_data_test,
+        'result_training' : result_data_training,
         'test_accuration' : str(
             format((np.mean(test == y_test) * 100))
         ),
@@ -231,7 +257,8 @@ def create_training_data(classes, data_dir, img_size_w, img_size_h, param):
     for clas in classes:
         path = os.path.join(
             data_dir,
-            param,clas
+            param,
+            clas
         ) 
         for img in os.listdir(path):
             try:
@@ -251,6 +278,7 @@ def create_training_data(classes, data_dir, img_size_w, img_size_h, param):
                 )
                 result.append(
                     [
+                        { "filename" : img, "label" : classes.index(clas) },
                         new_array,
                         classes.index(clas)
                     ]
@@ -279,9 +307,10 @@ def allowed_file(filename):
 # yang setiap data akan di ubah ke numpy array
 # dan di normalisasikan
 def make_X_and_y(training_data, input_layer_size_w, input_layer_size_h):
-    X,y = [], []
+    file_datas, X,y = [], [], []
 
-    for features,label in training_data:
+    for file_data,features,label in training_data:
+        file_datas.append(file_data)
         X.append(features)
         y.append(label)
         
@@ -292,18 +321,18 @@ def make_X_and_y(training_data, input_layer_size_w, input_layer_size_h):
     )
     X = X / 255
 
-    return X,y
+    return file_datas,X,y
 
 
 # fungsi untuk membuat array yang
 # akan digunakan sebagai data training
-def make_training_X_and_y(X,y,max_training_example):
-    return X[:max_training_example, :], y[:max_training_example]
+def make_training_X_and_y(file_datas,X,y,max_training_example):
+    return file_datas[:max_training_example], X[:max_training_example, :], y[:max_training_example]
 
 # fungsi untuk membuat array yang
 # akan digunakan sebagai data testing
-def make_test_X_and_y(X,y,max_training_test):
-    return X[max_training_test:, :], y[max_training_test:]
+def make_test_X_and_y(file_datas,X,y,max_training_test):
+    return file_datas[max_training_test:], X[max_training_test:, :], y[max_training_test:]
 
 # fungsi untuk meyiapkan theta
 # akan digunakan sebagai model training
@@ -404,7 +433,6 @@ def saving_training_model(target_param,Theta1,Theta2):
         Theta2,
         delimiter=","
     )
-
 
 # fungsi untuk mengambil hasil training
 # model yang digunakan untuk proses deteksi

@@ -2,12 +2,13 @@ new Vue({
     el: '#app',
     data() {
         return {
+            label_names : ["S","KS","B"],
             show_table : false,
             query : {
-                img_size_w : 28,
-                img_size_h : 28,
+                img_size_w : 150,
+                img_size_h : 100,
                 hidden_layer : 100,
-                max_training_example : 400,
+                max_training_example : 300,
                 max_training_test : 300,
                 maxiter : 100
             },
@@ -18,7 +19,9 @@ new Vue({
                     target_param: "", 
                     test_accuration: "", 
                     training_accuration: "",
-                    training_model_exist : false
+                    training_model_exist : false,
+                    result_test : [],
+                    result_training : []
                 },
                 gill : {
                     total_dataset: "",
@@ -26,7 +29,9 @@ new Vue({
                     target_param: "", 
                     test_accuration: "", 
                     training_accuration: "",
-                    training_model_exist : false
+                    training_model_exist : false,
+                    result_test : [],
+                    result_training : []
                 },
                 skin : {
                     total_dataset: "",
@@ -34,7 +39,9 @@ new Vue({
                     target_param: "", 
                     test_accuration: "", 
                     training_accuration: "",
-                    training_model_exist : false
+                    training_model_exist : false,
+                    result_test : [],
+                    result_training : []
                 }
             },
             is_online : true,
@@ -52,7 +59,7 @@ new Vue({
         //window.history.pushState({ noBackExitsApp: true }, '')
         //window.addEventListener('popstate', this.backPress)
         this.setCurrentHost()
-        this.loadSetting()
+        //this.loadSetting()
     },
     mounted () {
         window.$('.dropdown-trigger').dropdown()
@@ -81,12 +88,7 @@ new Vue({
                         return
                     }
 
-                    this.training_result[response.data.target_param].total_dataset = response.data.total_dataset
-                    this.training_result[response.data.target_param].precision = response.data.precision
-                    this.training_result[response.data.target_param].target_param = response.data.target_param 
-                    this.training_result[response.data.target_param].test_accuration = response.data.test_accuration
-                    this.training_result[response.data.target_param].training_accuration = response.data.training_accuration
-                    this.training_result[response.data.target_param].training_model_exist = true
+                    this.training_result[param] = response.data
 
                     this.show_table = true
                     this.checkTrainingModelStatus()
@@ -111,6 +113,8 @@ new Vue({
                         return
                     }
                     this.training_result[param] = response.data
+                    this.displayChart('chart-' + param, this.training_result[param])
+
                 })
                 .catch(e => {
                     console.log(e)
@@ -143,6 +147,80 @@ new Vue({
             this.checkTrainingModel('eye')
             this.checkTrainingModel('gill')
             this.checkTrainingModel('skin')
+        },
+        displayChart(id, data){
+            let labels = []
+            for (let i=1;i<=300;i++){
+                labels.push("" + i)
+            }
+
+            let label_real = []
+            let label_training = []
+            let label_test = []
+
+            for (let i=0;i<data.result_training.length;i++){
+                let element = data.result_training[i]
+                label_real.push(element.label)
+                label_training.push(element.predict_label)
+            }
+            
+            for (let i=0;i<data.result_test.length;i++){
+                let element = data.result_test[i]
+                label_real.push(element.label)
+                label_test.push(element.predict_label)
+            }
+
+            new Chart(id, {
+                type: 'scatter',
+                data: {
+                    labels: labels,
+                    datasets: [
+                    {
+                        label: 'Label',
+                        data: label_real,
+                        backgroundColor: [
+                            '#000000',
+                        ],
+                        borderColor: [
+                            '#000000',
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Label Training',
+                        data: label_training,
+                        backgroundColor: [
+                            '#ff0000',
+                        ],
+                        borderColor: [
+                            '#ff0000',
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Label Testing',
+                        data: label_test,
+                        backgroundColor: [
+                            '#0400ff',
+                        ],
+                        borderColor: [
+                            '#0400ff',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            steps: 1,
+                            stepValue: 1,
+                            min : -2,
+                            max: 4
+                        }
+                    }
+                }
+            });
         },
         saveSetting(){
             if (window.localStorage) {

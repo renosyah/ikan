@@ -66,11 +66,11 @@
             <h5>Pengaturan</h5>
             <div class="row">
               <div class="input-field col s12 m12 l4">
-                <input id="img_size_w" type="number" class="validate" v-model="query.img_size_w">
+                <input id="img_size_w" type="number" class="validate" v-model="query.img_size_w" disabled>
                 <label for="img_size_w">Jumlah Input Layer (W)</label>
               </div>
               <div class="input-field col s12 m12 l4">
-                <input id="img_size_h" type="number" class="validate" v-model="query.img_size_h">
+                <input id="img_size_h" type="number" class="validate" v-model="query.img_size_h" disabled>
                 <label for="img_size_h">Jumlah Input Layer (H)</label>
               </div>
               <div class="input-field col s12 m12 l4">
@@ -78,15 +78,15 @@
                 <label for="hidden_layer">Jumlah Hidden Layer</label>
               </div>
               <div class="input-field col s12 m12 l4">
-                <input id="max_training_example" type="number" class="validate" value="400" v-model="query.max_training_example">
+                <input id="max_training_example" type="number" class="validate" value="400" v-model="query.max_training_example" disabled>
                 <label for="max_training_example">Maximum Training Example</label>
               </div>
               <div class="input-field col s12 m12 l4">
-                <input id="max_training_test" type="number" class="validate" value="300" v-model="query.max_training_test">
+                <input id="max_training_test" type="number" class="validate" value="300" v-model="query.max_training_test" disabled>
                 <label for="max_training_test">Maximum Training Test</label>
               </div>
               <div class="input-field col s12 m12 l4">
-                <input id="max_maxiter" type="number" class="validate" value="100" v-model="query.maxiter">
+                <input id="max_maxiter" type="number" class="validate" value="100" v-model="query.maxiter" disabled>
                 <label for="max_maxiter">Maximum Iterasi</label>
               </div>
             </div>
@@ -119,6 +119,210 @@
           </div>
         </div>
       </div>
+
+
+
+
+
+      <div class="row">
+        <div class="col s12">
+          <div class="card-panel">
+            <h5>Hasil : Mata</h5>
+            
+            <!-- untuk grapik tampil/tidak ubah v-show="true" -->
+            <canvas v-show="true" id="chart-eye" width="100%" height="50"></canvas>
+            
+            <!-- untuk tabel tampil/tidak ubah v-show="true" -->
+            <div class="row" v-show="true">
+              <div class="col s12 m12 l6">
+                <h5>Tabel Pelatihan : Mata</h5>
+                <table>
+                  <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>File Gambar</th>
+                        <th>Label</th>
+                        <th>Prediksi</th>
+                        <th>Hasil</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <div>
+                      <tr v-for="i,idx in training_result.eye.result_training" :key="i.filename">
+                        <th> {{ idx + 1 }} </th>
+                        <td> {{ i.filename }} </td>
+                        <td> {{ label_names[i.label] }} </td>
+                        <td> {{ label_names[i.predict_label] }} </td>
+                        <td> {{ i.predict_label == i.label ? "Benar" : "Salah" }} </td>
+                      </tr>
+                    </div>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col s12 m12 l6">
+                <h5>Tabel Pengujian : Mata</h5>
+                <table>
+                  <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>File Gambar</th>
+                        <th>Label</th>
+                        <th>Prediksi</th>
+                        <th>Hasil</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <div>
+                      <tr v-for="(i,idx) in training_result.eye.result_test" :key="i.filename">
+                        <th> {{ idx + 1 }} </th>
+                        <td> {{ i.filename }} </td>
+                        <td> {{ label_names[i.label] }} </td>
+                        <td> {{ label_names[i.predict_label] }} </td>
+                        <td> {{ i.predict_label == i.label ? "Benar" : "Salah" }} </td>
+                      </tr>
+                    </div>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>
+
+
+      <div class="row">
+        <div class="col s12">
+          <div class="card-panel">
+            <h5>Hasil : Insang</h5>
+            <canvas id="chart-gill" width="100%" height="50"></canvas>
+            <div class="row" v-show="true">
+              <div class="col s12 m12 l6">
+                <h5>Tabel Pelatihan : Insang</h5>
+                <table>
+                  <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>File Gambar</th>
+                        <th>Label</th>
+                        <th>Prediksi</th>
+                        <th>Hasil</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <div>
+                      <tr v-for="i,idx in training_result.gill.result_training" :key="i.filename">
+                        <th> {{ idx + 1 }} </th>
+                        <td> {{ i.filename }} </td>
+                        <td> {{ label_names[i.predict_label] }} </td>
+                        <td> {{ i.predict_label }} </td>
+                        <td> {{ i.predict_label == i.label ? "Benar" : "Salah" }} </td>
+                      </tr>
+                    </div>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col s12 m12 l6">
+                <h5>Tabel Pengujian : Insang</h5>
+                <table>
+                  <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>File Gambar</th>
+                        <th>Label</th>
+                        <th>Prediksi</th>
+                        <th>Hasil</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <div>
+                      <tr v-for="(i,idx) in training_result.gill.result_test" :key="i.filename">
+                        <th> {{ idx + 1 }} </th>
+                        <td> {{ i.filename }} </td>
+                        <td> {{ label_names[i.predict_label] }} </td>
+                        <td> {{ i.predict_label }} </td>
+                        <td> {{ i.predict_label == i.label ? "Benar" : "Salah" }} </td>
+                      </tr>
+                    </div>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>
+
+
+      
+      <div class="row">
+        <div class="col s12">
+          <div class="card-panel">
+            <h5>Hasil : Kulit</h5>
+            <canvas v-show="true" id="chart-skin" width="100%" height="50"></canvas>
+            <div class="row" v-show="true">
+              <div class="col s12 m12 l6">
+                <h5>Tabel Pelatihan : Kulit</h5>
+                <table>
+                  <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>File Gambar</th>
+                        <th>Label</th>
+                        <th>Prediksi</th>
+                        <th>Hasil</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <div>
+                      <tr v-for="i,idx in training_result.skin.result_training" :key="i.filename">
+                        <th> {{ idx + 1 }} </th>
+                        <td> {{ i.filename }} </td>
+                        <td> {{ label_names[i.label] }} </td>
+                        <td> {{ label_names[i.predict_label] }} </td>
+                        <td> {{ i.predict_label == i.label ? "Benar" : "Salah" }} </td>
+                      </tr>
+                    </div>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col s12 m12 l6">
+                <h5>Tabel Pengujian : Kulit</h5>
+                <table>
+                  <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>File Gambar</th>
+                        <th>Label</th>
+                        <th>Prediksi</th>
+                        <th>Hasil</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <div>
+                      <tr v-for="(i,idx) in training_result.skin.result_test" :key="i.filename">
+                        <th> {{ idx + 1 }} </th>
+                        <td> {{ i.filename }} </td>
+                        <td> {{ label_names[i.label] }} </td>
+                        <td> {{ label_names[i.predict_label] }} </td>
+                        <td> {{ i.predict_label == i.label ? "Benar" : "Salah" }} </td>
+                      </tr>
+                    </div>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>
+
+
+
+
+
+
+
+
+
+
 
       <div id="table" class="row">
         <div class="col s12">
@@ -189,6 +393,7 @@
   </div>
     <!-- built files will be auto injected -->
     <!--  Scripts-->
+    <script src="./js/chart.min.js"></script>
     <script src="./js/jquery.min.js"></script>
     <script src="./js/materialize.js"></script>
     <script src="./js/vue.js"></script>
